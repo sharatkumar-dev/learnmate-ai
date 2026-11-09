@@ -1,0 +1,118 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+  "name": "Learning Companion",
+  "description": "Conversational AI learning companion — responds to learner messages with context-aware guidance. Uses GraniteStub by default; swap for GraniteWatsonx when watsonx.ai credentials are available.",
+  "data": {
+    "nodes": [
+      {
+        "id": "ChatInput-lc",
+        "type": "genericNode",
+        "position": { "x": 100, "y": 200 },
+        "data": {
+          "type": "ChatInput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat input — paste JSON with message and session_context here.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Input"
+          },
+          "id": "ChatInput-lc"
+        }
+      },
+      {
+        "id": "GraniteStub-lc",
+        "type": "genericNode",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "type": "GraniteStub",
+          "node": {
+            "template": {
+              "flow_type": {
+                "type": "str",
+                "value": "learning-companion",
+                "display_name": "Flow Type",
+                "required": true,
+                "show": true
+              },
+              "input_json": {
+                "type": "str",
+                "value": "",
+                "display_name": "Input JSON",
+                "required": true,
+                "show": true
+              }
+            },
+            "description": "Lightly dynamic IBM Granite mock. Returns _mock:true companion response.",
+            "base_classes": ["Data"],
+            "display_name": "GraniteStub (Mock)"
+          },
+          "id": "GraniteStub-lc"
+        }
+      },
+      {
+        "id": "ChatOutput-lc",
+        "type": "genericNode",
+        "position": { "x": 800, "y": 200 },
+        "data": {
+          "type": "ChatOutput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat output — displays the companion response JSON.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Output"
+          },
+          "id": "ChatOutput-lc"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-ChatInput-lc-GraniteStub-lc",
+        "source": "ChatInput-lc",
+        "target": "GraniteStub-lc",
+        "sourceHandle": "ChatInput-lc|text|ChatInput-lc",
+        "targetHandle": "GraniteStub-lc|input_json|GraniteStub-lc"
+      },
+      {
+        "id": "edge-GraniteStub-lc-ChatOutput-lc",
+        "source": "GraniteStub-lc",
+        "target": "ChatOutput-lc",
+        "sourceHandle": "GraniteStub-lc|response|GraniteStub-lc",
+        "targetHandle": "ChatOutput-lc|input_value|ChatOutput-lc"
+      }
+    ]
+  },
+  "is_component": false,
+  "updated_at": "2026-11-09T00:00:00Z",
+  "tags": ["learnmate-ai", "companion", "mock"]
+}

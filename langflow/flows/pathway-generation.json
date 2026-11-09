@@ -1,0 +1,118 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+  "name": "Pathway Generation",
+  "description": "Generates a personalized learning pathway from learner profile inputs (target_role, current_skills, interests, time_available). Uses GraniteStub by default; swap for GraniteWatsonx when watsonx.ai credentials are available.",
+  "data": {
+    "nodes": [
+      {
+        "id": "ChatInput-pg",
+        "type": "genericNode",
+        "position": { "x": 100, "y": 200 },
+        "data": {
+          "type": "ChatInput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat input — paste learner profile JSON here.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Input"
+          },
+          "id": "ChatInput-pg"
+        }
+      },
+      {
+        "id": "GraniteStub-pg",
+        "type": "genericNode",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "type": "GraniteStub",
+          "node": {
+            "template": {
+              "flow_type": {
+                "type": "str",
+                "value": "pathway-generation",
+                "display_name": "Flow Type",
+                "required": true,
+                "show": true
+              },
+              "input_json": {
+                "type": "str",
+                "value": "",
+                "display_name": "Input JSON",
+                "required": true,
+                "show": true
+              }
+            },
+            "description": "Lightly dynamic IBM Granite mock. Returns _mock:true responses shaped to learner inputs.",
+            "base_classes": ["Data"],
+            "display_name": "GraniteStub (Mock)"
+          },
+          "id": "GraniteStub-pg"
+        }
+      },
+      {
+        "id": "ChatOutput-pg",
+        "type": "genericNode",
+        "position": { "x": 800, "y": 200 },
+        "data": {
+          "type": "ChatOutput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat output — displays the pathway JSON.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Output"
+          },
+          "id": "ChatOutput-pg"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-ChatInput-pg-GraniteStub-pg",
+        "source": "ChatInput-pg",
+        "target": "GraniteStub-pg",
+        "sourceHandle": "ChatInput-pg|text|ChatInput-pg",
+        "targetHandle": "GraniteStub-pg|input_json|GraniteStub-pg"
+      },
+      {
+        "id": "edge-GraniteStub-pg-ChatOutput-pg",
+        "source": "GraniteStub-pg",
+        "target": "ChatOutput-pg",
+        "sourceHandle": "GraniteStub-pg|response|GraniteStub-pg",
+        "targetHandle": "ChatOutput-pg|input_value|ChatOutput-pg"
+      }
+    ]
+  },
+  "is_component": false,
+  "updated_at": "2026-11-09T00:00:00Z",
+  "tags": ["learnmate-ai", "pathway", "mock"]
+}

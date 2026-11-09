@@ -1,0 +1,15 @@
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+LANGFLOW_BASE_URL: str = os.getenv("LANGFLOW_BASE_URL", "http://localhost:7860")
+LANGFLOW_API_KEY: str = os.getenv("LANGFLOW_API_KEY", "")
+
+FLOW_ID_PATHWAY_GENERATION: str = os.getenv("FLOW_ID_PATHWAY_GENERATION", "")
+FLOW_ID_SKILL_GAP_ANALYSIS: str = os.getenv("FLOW_ID_SKILL_GAP_ANALYSIS", "")
+FLOW_ID_COURSE_RECOMMENDATIONS: str = os.getenv("FLOW_ID_COURSE_RECOMMENDATIONS", "")
+FLOW_ID_ADAPTIVE_UPDATE: str = os.getenv("FLOW_ID_ADAPTIVE_UPDATE", "")
+FLOW_ID_PROGRESS_SUMMARY: str = os.getenv("FLOW_ID_PROGRESS_SUMMARY", "")
+FLOW_ID_LEARNING_COMPANION: str = os.getenv("FLOW_ID_LEARNING_COMPANION", "")

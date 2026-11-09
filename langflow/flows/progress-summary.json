@@ -1,0 +1,118 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+  "name": "Progress Summary",
+  "description": "Generates an AI narrative progress summary from completed milestones, goals, and target role. Uses GraniteStub by default; swap for GraniteWatsonx when watsonx.ai credentials are available.",
+  "data": {
+    "nodes": [
+      {
+        "id": "ChatInput-ps",
+        "type": "genericNode",
+        "position": { "x": 100, "y": 200 },
+        "data": {
+          "type": "ChatInput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat input — paste JSON with completed_milestones, goals, and target_role here.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Input"
+          },
+          "id": "ChatInput-ps"
+        }
+      },
+      {
+        "id": "GraniteStub-ps",
+        "type": "genericNode",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "type": "GraniteStub",
+          "node": {
+            "template": {
+              "flow_type": {
+                "type": "str",
+                "value": "progress-summary",
+                "display_name": "Flow Type",
+                "required": true,
+                "show": true
+              },
+              "input_json": {
+                "type": "str",
+                "value": "",
+                "display_name": "Input JSON",
+                "required": true,
+                "show": true
+              }
+            },
+            "description": "Lightly dynamic IBM Granite mock. Returns _mock:true progress narrative.",
+            "base_classes": ["Data"],
+            "display_name": "GraniteStub (Mock)"
+          },
+          "id": "GraniteStub-ps"
+        }
+      },
+      {
+        "id": "ChatOutput-ps",
+        "type": "genericNode",
+        "position": { "x": 800, "y": 200 },
+        "data": {
+          "type": "ChatOutput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat output — displays the progress summary JSON.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Output"
+          },
+          "id": "ChatOutput-ps"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-ChatInput-ps-GraniteStub-ps",
+        "source": "ChatInput-ps",
+        "target": "GraniteStub-ps",
+        "sourceHandle": "ChatInput-ps|text|ChatInput-ps",
+        "targetHandle": "GraniteStub-ps|input_json|GraniteStub-ps"
+      },
+      {
+        "id": "edge-GraniteStub-ps-ChatOutput-ps",
+        "source": "GraniteStub-ps",
+        "target": "ChatOutput-ps",
+        "sourceHandle": "GraniteStub-ps|response|GraniteStub-ps",
+        "targetHandle": "ChatOutput-ps|input_value|ChatOutput-ps"
+      }
+    ]
+  },
+  "is_component": false,
+  "updated_at": "2026-11-09T00:00:00Z",
+  "tags": ["learnmate-ai", "progress", "mock"]
+}

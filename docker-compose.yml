@@ -1,0 +1,49 @@
+version: '3.9'
+
+networks:
+  learnmate:
+    driver: bridge
+
+services:
+  backend:
+    build: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - LANGFLOW_BASE_URL=http://langflow:7860
+    volumes:
+      - ./backend:/app
+    networks:
+      - learnmate
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    networks:
+      - learnmate
+    restart: unless-stopped
+
+  langflow:
+    image: langflowai/langflow:latest
+    ports:
+      - '7860:7860'
+    volumes:
+      - ./langflow/components:/root/.langflow/custom_components
+    environment:
+      - LANGFLOW_COMPONENTS_PATH=/root/.langflow/custom_components
+    networks:
+      - learnmate
+    restart: unless-stopped

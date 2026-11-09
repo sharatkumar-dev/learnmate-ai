@@ -1,0 +1,118 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+  "name": "Skill Gap Analysis",
+  "description": "Analyses the gap between the learner's current skills and the target role requirements. Uses GraniteStub by default; swap for GraniteWatsonx when watsonx.ai credentials are available.",
+  "data": {
+    "nodes": [
+      {
+        "id": "ChatInput-sg",
+        "type": "genericNode",
+        "position": { "x": 100, "y": 200 },
+        "data": {
+          "type": "ChatInput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat input — paste JSON with target_role and current_skills here.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Input"
+          },
+          "id": "ChatInput-sg"
+        }
+      },
+      {
+        "id": "GraniteStub-sg",
+        "type": "genericNode",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "type": "GraniteStub",
+          "node": {
+            "template": {
+              "flow_type": {
+                "type": "str",
+                "value": "skill-gap-analysis",
+                "display_name": "Flow Type",
+                "required": true,
+                "show": true
+              },
+              "input_json": {
+                "type": "str",
+                "value": "",
+                "display_name": "Input JSON",
+                "required": true,
+                "show": true
+              }
+            },
+            "description": "Lightly dynamic IBM Granite mock. Returns _mock:true skill gap report.",
+            "base_classes": ["Data"],
+            "display_name": "GraniteStub (Mock)"
+          },
+          "id": "GraniteStub-sg"
+        }
+      },
+      {
+        "id": "ChatOutput-sg",
+        "type": "genericNode",
+        "position": { "x": 800, "y": 200 },
+        "data": {
+          "type": "ChatOutput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat output — displays the skill gap report JSON.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Output"
+          },
+          "id": "ChatOutput-sg"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-ChatInput-sg-GraniteStub-sg",
+        "source": "ChatInput-sg",
+        "target": "GraniteStub-sg",
+        "sourceHandle": "ChatInput-sg|text|ChatInput-sg",
+        "targetHandle": "GraniteStub-sg|input_json|GraniteStub-sg"
+      },
+      {
+        "id": "edge-GraniteStub-sg-ChatOutput-sg",
+        "source": "GraniteStub-sg",
+        "target": "ChatOutput-sg",
+        "sourceHandle": "GraniteStub-sg|response|GraniteStub-sg",
+        "targetHandle": "ChatOutput-sg|input_value|ChatOutput-sg"
+      }
+    ]
+  },
+  "is_component": false,
+  "updated_at": "2026-11-09T00:00:00Z",
+  "tags": ["learnmate-ai", "skill-gap", "mock"]
+}

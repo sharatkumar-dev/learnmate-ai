@@ -1,0 +1,118 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+  "name": "Course Recommendations",
+  "description": "Generates curated course and resource recommendations from skill gaps and learning style. Uses GraniteStub by default; swap for GraniteWatsonx when watsonx.ai credentials are available.",
+  "data": {
+    "nodes": [
+      {
+        "id": "ChatInput-cr",
+        "type": "genericNode",
+        "position": { "x": 100, "y": 200 },
+        "data": {
+          "type": "ChatInput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat input — paste JSON with skill_gaps, learning_style, and target_role here.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Input"
+          },
+          "id": "ChatInput-cr"
+        }
+      },
+      {
+        "id": "GraniteStub-cr",
+        "type": "genericNode",
+        "position": { "x": 450, "y": 200 },
+        "data": {
+          "type": "GraniteStub",
+          "node": {
+            "template": {
+              "flow_type": {
+                "type": "str",
+                "value": "course-recommendations",
+                "display_name": "Flow Type",
+                "required": true,
+                "show": true
+              },
+              "input_json": {
+                "type": "str",
+                "value": "",
+                "display_name": "Input JSON",
+                "required": true,
+                "show": true
+              }
+            },
+            "description": "Lightly dynamic IBM Granite mock. Returns _mock:true recommendations list.",
+            "base_classes": ["Data"],
+            "display_name": "GraniteStub (Mock)"
+          },
+          "id": "GraniteStub-cr"
+        }
+      },
+      {
+        "id": "ChatOutput-cr",
+        "type": "genericNode",
+        "position": { "x": 800, "y": 200 },
+        "data": {
+          "type": "ChatOutput",
+          "node": {
+            "template": {
+              "input_value": {
+                "type": "str",
+                "value": "",
+                "display_name": "Text",
+                "required": false,
+                "show": true
+              },
+              "should_store_message": {
+                "type": "bool",
+                "value": true,
+                "display_name": "Store Messages",
+                "required": false,
+                "show": false
+              }
+            },
+            "description": "Chat output — displays the recommendations JSON.",
+            "base_classes": ["Message"],
+            "display_name": "Chat Output"
+          },
+          "id": "ChatOutput-cr"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-ChatInput-cr-GraniteStub-cr",
+        "source": "ChatInput-cr",
+        "target": "GraniteStub-cr",
+        "sourceHandle": "ChatInput-cr|text|ChatInput-cr",
+        "targetHandle": "GraniteStub-cr|input_json|GraniteStub-cr"
+      },
+      {
+        "id": "edge-GraniteStub-cr-ChatOutput-cr",
+        "source": "GraniteStub-cr",
+        "target": "ChatOutput-cr",
+        "sourceHandle": "GraniteStub-cr|response|GraniteStub-cr",
+        "targetHandle": "ChatOutput-cr|input_value|ChatOutput-cr"
+      }
+    ]
+  },
+  "is_component": false,
+  "updated_at": "2026-11-09T00:00:00Z",
+  "tags": ["learnmate-ai", "recommendations", "mock"]
+}
