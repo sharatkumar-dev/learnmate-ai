@@ -90,3 +90,9 @@ langflow/.langflow/
 *.tmp
 *.bak
 learnmate-ai-plan.md
+
+# ---- Local Submissions & Testimonials (Do not push to GitHub) ---------------
+student_testimonial.*
+scratch_user_photo.*
+learnmate_langflow_workflow.png
+learnmate_architecture_blueprint.png
