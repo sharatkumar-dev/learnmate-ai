@@ -2,434 +2,380 @@
 
 # 🎓 LearnMate AI
 
-### Your Personal AI-Powered Learning Companion
+### Agentic AI-Powered Personalized Course Pathways Platform
 
-*An intelligent, agentic learning platform that transforms your career goals into structured, personalized learning roadmaps — powered by IBM Granite and watsonx.ai.*
+*An intelligent, adaptive learning ecosystem that dynamically builds, monitors, and optimizes personalized engineering curricula — powered by **IBM Granite 3.0** and **watsonx.ai**.*
 
-[![Python](https://img.shields.io/badge/Python-3.11+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-latest-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-18+-61dafb?style=flat-square&logo=react&logoColor=black)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v3-06b6d4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Langflow](https://img.shields.io/badge/Langflow-agentic_AI-ff6b6b?style=flat-square)](https://langflow.org)
-[![IBM watsonx.ai](https://img.shields.io/badge/IBM_watsonx.ai-Granite-be95ff?style=flat-square&logo=ibm&logoColor=white)](https://www.ibm.com/watsonx)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![IBM SkillsBuild](https://img.shields.io/badge/IBM_SkillsBuild-Internship_Capstone-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://skillsbuild.org)
+[![Problem Statement](https://img.shields.io/badge/Edunet_Foundation-Problem_Statement_12-FF5722?style=for-the-badge)](https://edunetfoundation.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18+-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Modern_Craft-06b6d4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Tests](https://img.shields.io/badge/pytest-23_passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](backend/tests)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
 </div>
 
 ---
 
-## 📖 Overview
-
-**LearnMate AI** is a full-stack, agentic AI application that helps learners discover and follow personalized learning pathways based on their current skills, interests, and career goals.
-
-Unlike generic course platforms, LearnMate AI uses **IBM Granite large language models** via **Langflow agentic workflows** to generate adaptive, goal-aware learning plans that evolve as you progress. The platform identifies where you are today, maps where you want to go, and guides you there — step by step.
-
-### Why LearnMate AI?
-
-| Problem | LearnMate AI Solution |
-|---|---|
-| Generic one-size-fits-all courses | Personalized pathway built around *your* exact skill gaps |
-| No clear starting point | Structured learner assessment identifies your current level |
-| Static learning plans | Adaptive pathways that update based on your progress and feedback |
-| Overwhelming resource discovery | Curated, AI-matched course and resource recommendations |
-| Learning in isolation | Conversational AI companion available at every step |
+> ### 📌 Capstone Project Context & Problem Statement
+> **Edunet Foundation / IBM SkillsBuild Internship**  
+> **Problem Statement No. 12 — Agentic AI for Personalized Course Pathways**  
+> 
+> * **The Challenge:** Students frequently struggle to identify the right learning pathways aligning with their current proficiencies, target careers, and long-term goals due to fragmented online tutorials, information overload, and a lack of personalized mentoring.
+> * **The LearnMate AI Solution:** An autonomous Agentic AI coach that evaluates current skills, audits deficits against enterprise engineering roles, dynamically generates milestone-based roadmaps, continuously adapts paths based on progress and feedback, and provides real-time Socratic debugging.
+> * **Mandatory Technology:** Powered by **IBM Granite 3.0** and **IBM Cloud / watsonx.ai** services, with offline zero-dependency mock stubs for local evaluation without cloud quotas.
 
 ---
 
-## ✨ Key Features
+## 📸 Visual Showcase & Prototype Gallery
 
-### 🧠 Learner Assessment
-A guided onboarding experience that captures your current skills, target role, learning interests, and weekly availability — forming the foundation for your personalized journey.
+LearnMate AI features an enterprise-grade **"Modern Craft Editorial"** design system migrated directly from high-fidelity **Stitch prototypes** (Electric Indigo `#4F46E5`, Porcelain Surface `#FAF8FF`, Plus Jakarta Sans headlines, and JetBrains Mono code chips).
 
-### 🗺️ Personalized Learning Pathways
-IBM Granite generates a structured, milestone-based roadmap tailored to your specific profile. Each milestone includes a title, description, curated resources, and a logical progression order.
+<div align="center">
 
-### 🎯 Skill Gap Analysis
-The platform identifies the exact skills standing between you and your target role, ranked by priority (high / medium / low) with actionable rationale for each gap.
+### Executive Learner Dashboard (`/dashboard`)
+*Live Go code execution sandbox, weekly study cadence, retention decay tracking, and active Raft consensus modules.*
+<img src="frontend/screenshots/dashboard_new.png" alt="Executive Learner Dashboard" width="95%" />
 
-### 📚 Course & Resource Recommendations
-Curated recommendations matched to your identified skill gaps — including courses, tutorials, books, videos, and articles — each tagged with type, estimated duration, and the skill it addresses.
+<br/><br/>
 
-### 🔄 Adaptive Learning
-Submit feedback on your progress at any time. LearnMate AI re-evaluates your pathway and adjusts upcoming milestones based on what you have completed and how you have found the journey so far.
+### Adaptive Learning Roadmap (`/pathway`)
+*4-stage visual execution DAG, pulsing active states, node inspector flyout, and dynamic SVG Quorum Topology diagrams.*
+<img src="frontend/screenshots/pathway_verified.png" alt="Adaptive Learning Roadmap" width="95%" />
 
-### 📈 Progress Tracking
-A milestone checklist with a visual progress bar. Request an AI-generated narrative summary of your journey — reflecting on completed milestones and mapping the road ahead.
+<br/><br/>
 
-### 💬 AI Learning Companion
-A conversational AI assistant with full awareness of your session context (profile, pathway stage, recent progress). Ask questions, get encouragement, or request clarification on any topic throughout your learning journey.
+### Socratic AI Companion (`/companion`)
+*Split-screen Socratic debugger, active research paper grounding, mathematical quorum proofs, and network partition diagrams.*
+<img src="frontend/screenshots/companion_verified.png" alt="Socratic AI Companion" width="95%" />
+
+<br/><br/>
+
+### Progress & Cognitive Retention Tracker (`/progress`)
+*Continuous Ebbinghaus memory decay curves, 5-axis competency radar charts, and FSRS-4.5 spaced repetition queues.*
+<img src="frontend/screenshots/progress_verified.png" alt="Progress & Retention Tracker" width="95%" />
+
+<br/><br/>
+
+### Curated Resource Library (`/resources`)
+*Staff collections, interactive system design labs, research papers, and technical books synchronized with IBM Granite.*
+<img src="frontend/screenshots/resources_verified.png" alt="Curated Resource Library" width="95%" />
+
+<br/><br/>
+
+### Header Profile & Settings Dropdown
+*Accessible user status drawer, calibration wizard shortcut, global `⌘K` palette trigger, and clean session teardown.*
+<img src="frontend/screenshots/header_dropdown_closeup.png" alt="Header Profile & Settings Dropdown" width="45%" />
+
+</div>
 
 ---
 
-## 🏗️ Architecture
+## 🌟 The 10 Migrated Prototype Screens
+
+| # | Screen | Route | Key Capabilities & Technical Highlights |
+|---|---|---|---|
+| **01** | **Landing Page** | `/` & `/landing` | Hero value proposition, live Go consensus preview terminal, 3 architectural pillar cards, dual conversion CTAs. |
+| **02** | **Sign Up & Track Selection** | `/signup` | GitHub Enterprise / Google SSO, real-time password entropy meter (4-stage status), 3 primary engineering tracks. |
+| **03** | **4-Step Calibration Protocol** | `/onboarding` | Stepper calibration: Target role, baseline skills, modal preferences (sandboxes/papers), and weekly commitment slider. |
+| **04** | **Learner Dashboard** | `/dashboard` | 4 executive KPI cards, 8-column Go sandbox (`raft_election.go`), curated micro-lessons, weekly rhythm heatmap. |
+| **05** | **Learning Pathway Roadmap** | `/pathway` | 4 progressive stages (Foundations → Consensus → Fault-Tolerance → Production), live Node Inspector, Quorum SVG diagram, natural language pathway adaptation. |
+| **06** | **Skill Gap Matrix** | `/skills` | Role deficit breakdown (High/Medium/Low priority), IBM Granite diagnostic rationales, interactive 5-axis SVG competency radar. |
+| **07** | **Curated Resource Library** | `/resources` | Staff Collections carousel (Google Spanner OSDI '12, MIT 6.824), format filter pills (Labs, Papers, Videos), difficulty tags. |
+| **08** | **Progress & Retention Tracker** | `/progress` | Weekly study velocity, continuous Ebbinghaus retention decay curve, active streak (`🔥 14 days`), spaced repetition flashcard queue. |
+| **09** | **AI Learning Companion** | `/companion` | 3 cognitive modes (Socratic, Direct Architect, Exam Prep), loaded source papers, visual split-brain network partition SVG diagram, live chat stream. |
+| **10** | **Settings & Cognitive Calibration**| `/settings` | IBM Granite 3.0 8B Instruct vs Claude 3.5 Sonnet inference switcher, context window slider (16k–128k), FSRS-4.5 spaced repetition tuning. |
+| **11** | **Global App Shell & Navigation**| *Global Shell* | 260px fixed craft sidebar, weekly goal progress bar (`85%`), top header with quick search, top-right user menu dropdown, and `⌘K` Command Palette. |
+
+---
+
+## 🏗️ Architecture & Agentic Data Flow
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Browser (Client)                              │
-│         React 18 · TypeScript · Vite · Tailwind CSS             │
-│                        shadcn/ui                                 │
-│                                                                  │
-│  Onboarding  │  Pathway  │  Skills  │  Recs  │  Progress  │  Chat│
-└──────────────────────────┬──────────────────────────────────────┘
-                           │  HTTP/JSON  (X-Session-ID header)
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  FastAPI Backend  (port 8000)                    │
-│                                                                  │
-│  Routers:  session · pathway · skills · recommendations         │
-│            progress · companion                                  │
-│                                                                  │
-│  Services: one per domain — Langflow-first, stub fallback        │
-│  Session:  in-memory dict[UUID → SessionState]                  │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │  HTTP REST  POST /api/v1/run/{flow_id}
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  Langflow Server  (port 7860)                    │
-│                                                                  │
-│  pathway-generation    skill-gap-analysis    course-recommendations│
-│  adaptive-update       progress-summary      learning-companion  │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │  LLM calls
-                 ┌─────────┴──────────┐
-                 ▼                    ▼
-       GraniteStub.py          GraniteWatsonx.py
-      (mock, _mock:true)    (ibm/granite-13b-chat-v2)
-      default / dev mode       production mode
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                         Browser Client (React 18 + TypeScript)                   │
+│          Vite · Tailwind CSS (Modern Craft Tokens) · Command Palette (⌘K)         │
+│                                                                                  │
+│  Landing │ Auth │ Onboarding │ Dashboard │ Pathway │ Skills │ Recs │ Chat │ Set  │
+└────────────────────────────────────────┬─────────────────────────────────────────┘
+                                         │  HTTP / JSON (Header: X-Session-ID)
+                                         ▼
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                           FastAPI Backend (Port 8000)                            │
+│                                                                                  │
+│   Routers:   /session  ·  /skills  ·  /pathway  ·  /recommendations              │
+│              /progress ·  /companion                                             │
+│                                                                                  │
+│   Services:  Granite-first service layer with session-scoped memory store        │
+└────────────────────────────────────────┬─────────────────────────────────────────┘
+                                         │
+                    ┌────────────────────┴────────────────────┐
+                    │ (If Langflow is configured)             │ (Default / Offline)
+                    ▼                                         ▼
+┌──────────────────────────────────────┐  ┌────────────────────────────────────────┐
+│      Langflow Server (Port 7860)     │  │          granite_stub.py Fallback      │
+│                                      │  │                                        │
+│  6 Custom Agentic AI Workflows:      │  │  Zero-dependency Python fallback       │
+│  • pathway-generation.json           │  │  Returns identical response schemas    │
+│  • skill-gap-analysis.json           │  │  Role-aware, dynamic, zero API fees    │
+│  • course-recommendations.json       │  │  Enables 100% offline development      │
+│  • adaptive-update.json              │  └────────────────────────────────────────┘
+│  • progress-summary.json             │
+│  • learning-companion.json           │
+└───────────────────┬──────────────────┘
+                    │
+         ┌──────────┴──────────┐
+         ▼                     ▼
+┌─────────────────┐   ┌────────────────────────────────────────────────────────────┐
+│ GraniteStub.py  │   │ GraniteWatsonx.py (IBM watsonx.ai Enterprise)              │
+│ (Mock Flow)     │   │ Model: ibm/granite-13b-chat-v2 / granite-3-8b-instruct     │
+└─────────────────┘   └────────────────────────────────────────────────────────────┘
 ```
-
-### Design Principles
-
-| Principle | Implementation |
-|---|---|
-| **Stub-first AI** | `GraniteStub.py` returns lightly dynamic, role-aware mock responses so the full app runs without any watsonx.ai credentials |
-| **Zero-friction swap** | Switching to real IBM Granite requires only 4 env vars + one Langflow component swap — no backend code changes |
-| **Graceful fallback** | If Langflow is unavailable, every backend service calls `granite_stub.py` directly — the app works without Docker |
-| **Session-scoped state** | All learner data lives in an in-memory `SessionState` object, threaded through every AI call for contextual responses |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology | Purpose |
+| Layer | Technologies | Purpose |
 |---|---|---|
-| **Frontend** | React 18, TypeScript, Vite | UI framework and build tooling |
-| **UI Components** | Tailwind CSS v3, shadcn/ui | Styling and accessible component library |
-| **Backend** | Python 3.11, FastAPI, Uvicorn | REST API and async service orchestration |
-| **Data Validation** | Pydantic v2 | Request/response models and session state |
-| **HTTP Client** | httpx | Async calls from backend to Langflow |
-| **AI Orchestration** | Langflow | Visual agentic workflow builder |
-| **AI Model** | IBM Granite (ibm/granite-13b-chat-v2) | Large language model via IBM watsonx.ai |
-| **Testing** | pytest, pytest-asyncio | Backend service unit tests |
-| **Infrastructure** | Docker, Docker Compose | Container orchestration |
+| **Frontend UI** | React 18, TypeScript 5.6, Vite 8, Tailwind CSS v3 | High-throughput SPA, static type-safety, rapid HMR |
+| **Design System** | Modern Craft Editorial (Electric Indigo, Porcelain, Slate) | Custom Tailwind tokens mirroring Stitch prototypes |
+| **Typography** | Plus Jakarta Sans, Inter, JetBrains Mono | Editorial headlines, readable body text, technical syntax |
+| **Iconography** | Google Material Symbols Outlined | Pixel-perfect vector icons across all views |
+| **Backend API** | Python 3.11, FastAPI, Uvicorn, Pydantic v2 | High-concurrency async REST API & input validation |
+| **AI Orchestration**| Langflow & IBM Granite 3.0 / watsonx.ai | Agentic reasoning, gap auditing, roadmap synthesis |
+| **Testing** | pytest, pytest-asyncio, puppeteer-core | Unit testing, integration auditing, headless browser screenshots |
+| **DevOps** | Docker, Docker Compose | Multi-container orchestration (Frontend, Backend, Langflow) |
 
 ---
 
-## 📋 Prerequisites
+## 🚀 Getting Started
 
-Ensure the following are installed before getting started:
+### Prerequisites
+* **Python 3.11+** installed ([python.org](https://python.org))
+* **Node.js 18+ or 20+ LTS** installed ([nodejs.org](https://nodejs.org))
+* **Git** installed ([git-scm.com](https://git-scm.com))
 
-| Tool | Minimum Version | Install |
-|---|---|---|
-| **Node.js** | 20.x LTS | [nodejs.org](https://nodejs.org) |
-| **Python** | 3.11 | [python.org](https://python.org) |
-| **Docker Desktop** | Latest stable | [docker.com](https://www.docker.com/products/docker-desktop) |
-| **Git** | Any recent | [git-scm.com](https://git-scm.com) |
-
-> **No IBM watsonx.ai account needed to run the app.** The default stub mode works fully offline.
+> **💡 No IBM Cloud credits or Bobcoins required to run:** The built-in offline stub engine simulates IBM Granite 3.0 locally with role-aware logic and zero external dependencies.
 
 ---
 
-## 🚀 Quick Start
+### Step-by-Step Local Setup
 
-### Option A — Docker (Full Stack, Recommended)
-
+#### 1. Clone the Repository
 ```bash
-# 1. Clone the repository
 git clone https://github.com/sharatkumar-dev/learnmate-ai.git
 cd learnmate-ai
-
-# 2. Create your environment file
-cp .env.example .env
-# No changes needed to run in stub mode
-
-# 3. Launch all three services
-docker-compose up
-
-# ✅ App is ready:
-#   Frontend (React UI)   →  http://localhost:5173
-#   Backend  (FastAPI)    →  http://localhost:8000
-#   API Docs (Swagger)    →  http://localhost:8000/docs
-#   Langflow (AI Flows)   →  http://localhost:7860
 ```
 
-### Option B — Local Development (No Docker)
-
+#### 2. Backend Setup (FastAPI)
 ```bash
-# Terminal 1 — Python backend
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --port 8000
+# Set up Python virtual environment
+python -m venv venv
 
-# Terminal 2 — React frontend
+# On Windows:
+.\venv\Scripts\activate
+# On macOS / Linux:
+# source venv/bin/activate
+
+# Install dependencies
+pip install -r backend/requirements.txt
+
+# Start the FastAPI server
+python -m uvicorn app.main:app --app-dir backend --reload --port 8000
+```
+* Backend API will be live at: **`http://127.0.0.1:8000`**
+* Interactive Swagger Docs: **`http://127.0.0.1:8000/docs`**
+
+#### 3. Frontend Setup (React + Vite)
+```bash
+# Open a new terminal
 cd frontend
+
+# Install node dependencies
 npm install
+
+# Start Vite development server
 npm run dev
 ```
-
-> **Stub mode is active by default.** All AI responses come from `GraniteStub.py` and are flagged with `"_mock": true`. The UI shows a dismissible "Preview Mode" banner on all data screens.
+* Frontend application will be live at: **`http://localhost:5173`**
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Environment Configuration
 
-Copy `.env.example` to `.env`. All variables have sensible defaults for local development.
+Create a `.env` file in the root directory (or copy from `.env.example`):
 
 ```bash
 cp .env.example .env
 ```
 
-| Variable | Default | Required for | Description |
-|---|---|---|---|
-| `LANGFLOW_BASE_URL` | `http://localhost:7860` | Langflow mode | URL of the running Langflow server |
-| `LANGFLOW_API_KEY` | *(empty)* | Optional | Langflow API key if auth is enabled |
-| `WATSONX_API_KEY` | *(empty)* | Real Granite | IBM Cloud API key |
-| `WATSONX_PROJECT_ID` | *(empty)* | Real Granite | IBM watsonx.ai project ID |
-| `WATSONX_URL` | `https://us-south.ml.cloud.ibm.com` | Real Granite | IBM watsonx.ai regional endpoint |
-| `FLOW_ID_PATHWAY_GENERATION` | *(empty)* | Langflow mode | UUID of imported pathway-generation flow |
-| `FLOW_ID_SKILL_GAP_ANALYSIS` | *(empty)* | Langflow mode | UUID of imported skill-gap-analysis flow |
-| `FLOW_ID_COURSE_RECOMMENDATIONS` | *(empty)* | Langflow mode | UUID of imported course-recommendations flow |
-| `FLOW_ID_ADAPTIVE_UPDATE` | *(empty)* | Langflow mode | UUID of imported adaptive-update flow |
-| `FLOW_ID_PROGRESS_SUMMARY` | *(empty)* | Langflow mode | UUID of imported progress-summary flow |
-| `FLOW_ID_LEARNING_COMPANION` | *(empty)* | Langflow mode | UUID of imported learning-companion flow |
-
-### Operating Modes
-
-```
-No env vars set         →  Stub mode    (GraniteStub.py, _mock:true, no external dependencies)
-FLOW_ID_* vars set      →  Langflow mode (calls Langflow flows, still using GraniteStub by default)
-WATSONX_* vars set      →  Live AI mode  (real IBM Granite via GraniteWatsonx.py)
-```
+| Key | Default Value | Description |
+|---|---|---|
+| `LANGFLOW_BASE_URL` | `http://localhost:7860` | URL of the local Langflow server (optional) |
+| `LANGFLOW_API_KEY` | *(empty)* | Optional API token for secured Langflow instances |
+| `WATSONX_API_KEY` | *(empty)* | IBM Cloud API key for live watsonx.ai inference |
+| `WATSONX_PROJECT_ID` | *(empty)* | IBM Cloud watsonx.ai Project ID |
+| `WATSONX_URL` | `https://us-south.ml.cloud.ibm.com` | IBM Cloud regional service endpoint |
+| `FLOW_ID_PATHWAY_GENERATION` | *(empty)* | Langflow flow UUID for pathway generation |
+| `FLOW_ID_SKILL_GAP_ANALYSIS` | *(empty)* | Langflow flow UUID for gap analysis |
+| `FLOW_ID_COURSE_RECOMMENDATIONS`| *(empty)* | Langflow flow UUID for resource curation |
+| `FLOW_ID_ADAPTIVE_UPDATE` | *(empty)* | Langflow flow UUID for dynamic roadmap adaptation |
+| `FLOW_ID_PROGRESS_SUMMARY` | *(empty)* | Langflow flow UUID for progress narratives |
+| `FLOW_ID_LEARNING_COMPANION` | *(empty)* | Langflow flow UUID for Socratic chat companion |
 
 ---
 
-## 🔗 API Reference
+## 🔗 REST API Specification
 
-Interactive documentation: **[http://localhost:8000/docs](http://localhost:8000/docs)** (Swagger UI) · **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
+All protected endpoints require the `X-Session-ID` header obtained from `/api/session/start`.
 
-| Method | Endpoint | Auth | Request Body | Description |
+| Method | Endpoint | Header | Payload | Description |
 |---|---|---|---|---|
-| `GET` | `/health` | — | — | Service health check |
-| `POST` | `/api/session/start` | — | `{ profile? }` | Create learner session, returns `session_id` |
-| `GET` | `/api/session/{id}` | Session ID | — | Retrieve full session state |
-| `POST` | `/api/skills/analyze` | Session ID | `{ current_skills, target_role }` | Run skill gap analysis |
-| `POST` | `/api/pathway/generate` | Session ID | `{ profile }` | Generate personalized learning pathway |
-| `POST` | `/api/pathway/adapt` | Session ID | `{ feedback, completed_milestone_ids }` | Adapt pathway based on progress |
-| `POST` | `/api/recommendations` | Session ID | — | Get curated resource recommendations |
-| `POST` | `/api/progress/update` | Session ID | `{ milestone_id }` | Mark a milestone as complete |
-| `GET` | `/api/progress/summary` | Session ID | — | Get AI-generated progress narrative |
-| `POST` | `/api/companion/chat` | Session ID | `{ message }` | Chat with AI learning companion |
-
-> **Session authentication:** Pass the `session_id` as the `X-Session-ID` request header on all endpoints after `/api/session/start`.
+| `GET` | `/health` | — | — | Health check & service readiness |
+| `POST` | `/api/session/start` | — | `{ "profile": { ... } }` | Initializes learner session & state |
+| `GET` | `/api/session/{id}` | `X-Session-ID` | — | Retrieves aggregate learner session state |
+| `POST` | `/api/skills/analyze` | `X-Session-ID` | `{ "current_skills": [...], "target_role": "..." }` | Audits skill gaps & priority ratings |
+| `POST` | `/api/pathway/generate` | `X-Session-ID` | `{ "profile": { ... } }` | Synthesizes personalized milestone roadmap |
+| `POST` | `/api/pathway/adapt` | `X-Session-ID` | `{ "feedback": "...", "completed": [...] }` | Dynamically adapts upcoming milestones |
+| `POST` | `/api/recommendations` | `X-Session-ID` | — | Generates curated papers, courses, and labs |
+| `POST` | `/api/progress/update` | `X-Session-ID` | `{ "milestone_id": "m1" }` | Marks milestone complete & adjusts velocity |
+| `GET` | `/api/progress/summary` | `X-Session-ID` | — | Generates AI narrative progress review |
+| `POST` | `/api/companion/chat` | `X-Session-ID` | `{ "message": "..." }` | Context-aware Socratic mentor dialogue |
 
 ---
 
-## 🤖 Langflow AI Flows
+## 🧪 Testing & Verification
 
-Six Langflow agentic flows power the AI layer. Each flow follows the pattern:
-**ChatInput → Prompt Template → GraniteStub / GraniteWatsonx → ChatOutput**
-
-| Flow | JSON File | Env Variable | Description |
-|---|---|---|---|
-| Pathway Generation | `pathway-generation.json` | `FLOW_ID_PATHWAY_GENERATION` | Generates milestone-based learning roadmap |
-| Skill Gap Analysis | `skill-gap-analysis.json` | `FLOW_ID_SKILL_GAP_ANALYSIS` | Identifies skill gaps ranked by priority |
-| Course Recommendations | `course-recommendations.json` | `FLOW_ID_COURSE_RECOMMENDATIONS` | Matches resources to identified gaps |
-| Adaptive Update | `adaptive-update.json` | `FLOW_ID_ADAPTIVE_UPDATE` | Re-plans pathway based on feedback |
-| Progress Summary | `progress-summary.json` | `FLOW_ID_PROGRESS_SUMMARY` | Generates narrative learning progress report |
-| Learning Companion | `learning-companion.json` | `FLOW_ID_LEARNING_COMPANION` | Conversational AI with session context |
-
-### Importing Flows into Langflow
-
+### Backend Unit & Integration Tests (pytest)
 ```bash
-# 1. Start Langflow
-docker-compose up langflow
+python -m pytest backend/tests -v
+```
+```
+backend/tests/test_companion_service.py ......                           [ 26%]
+backend/tests/test_pathway_service.py ....                               [ 43%]
+backend/tests/test_progress_service.py ......                            [ 69%]
+backend/tests/test_recommendations_service.py ....                       [ 86%]
+backend/tests/test_skills_service.py ...                                 [100%]
 
-# 2. Open the Langflow UI
-#    http://localhost:7860
-
-# 3. For each file in langflow/flows/:
-#    Click "New Flow" → "Import" → select the JSON file
-
-# 4. Copy the flow UUID from the UI URL bar
-#    e.g. http://localhost:7860/flow/550e8400-e29b-41d4-a716-446655440000
-#                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#                                    This is your FLOW_ID
-
-# 5. Set the flow IDs in .env and restart the backend
-docker-compose restart backend
+======================== 23 passed in 0.24s ========================
 ```
 
----
-
-## 🧪 Testing
-
-The backend ships with a pytest test suite covering happy-path and fallback behaviour for all five service modules.
-
+### Frontend Production Build & Type Checking
 ```bash
-cd backend
-pip install -r requirements.txt
-pytest tests/ -v
+npm --prefix frontend run build
 ```
-
-**Expected output:**
-
 ```
-tests/test_pathway_service.py::test_generate_pathway_returns_pathway          PASSED
-tests/test_pathway_service.py::test_adapt_pathway_returns_updated_pathway     PASSED
-tests/test_skills_service.py::test_analyze_gaps_returns_report                PASSED
-tests/test_recommendations_service.py::test_get_recommendations               PASSED
-tests/test_progress_service.py::test_update_progress_adds_milestone           PASSED
-tests/test_progress_service.py::test_get_summary_returns_narrative            PASSED
-tests/test_companion_service.py::test_chat_returns_response                   PASSED
-tests/test_companion_service.py::test_chat_appends_to_history                 PASSED
-...
-======================== 23 passed in 0.20s ========================
+✓ 2082 modules transformed.
+dist/index.html                   1.10 kB │ gzip:   0.57 kB
+dist/assets/index-DXMAfKrz.css   60.82 kB │ gzip:  10.85 kB
+dist/assets/index-Cesw7SFU.js   677.33 kB │ gzip: 159.82 kB
+✓ built in 5.22s with 0 errors
 ```
 
 ---
 
-## 🏢 Enabling Real IBM Granite
-
-> See **[`docs/watsonx-integration.md`](docs/watsonx-integration.md)** for the complete step-by-step guide.
-
-**Summary:**
-
-1. **Provision** an IBM watsonx.ai instance on IBM Cloud
-2. **Set credentials** in `.env`:
-   ```env
-   WATSONX_API_KEY=<your-api-key>
-   WATSONX_PROJECT_ID=<your-project-id>
-   WATSONX_URL=https://us-south.ml.cloud.ibm.com
-   ```
-3. **Enable** `langflow/components/GraniteWatsonx.py` (follow instructions in the file's docstring)
-4. **Swap** the `GraniteStub` node for `GraniteWatsonx` in each Langflow flow
-5. **Update** `FLOW_ID_*` env vars with the re-imported flow UUIDs
-6. **Restart** Langflow: `docker-compose restart langflow`
-7. **Verify** — responses will no longer include `"_mock": true`; the UI preview banner disappears
-
----
-
-## 📁 Project Structure
+## 📁 Repository Structure
 
 ```
 learnmate-ai/
+├── backend/
+│   ├── app/
+│   │   ├── main.py                  # FastAPI application entry & CORS
+│   │   ├── clients/langflow.py      # Async HTTP client for Langflow
+│   │   ├── core/
+│   │   │   ├── config.py            # Environment configuration
+│   │   │   └── session.py           # In-memory thread-safe session store
+│   │   ├── models/                  # Pydantic v2 data models
+│   │   ├── routers/                 # Modular API route controllers
+│   │   └── services/
+│   │       ├── companion_service.py # Socratic mentor business logic
+│   │       ├── granite_stub.py      # Offline Python fallback for IBM Granite
+│   │       ├── pathway_service.py   # Roadmap DAG generation & adaptation
+│   │       ├── progress_service.py  # Retention & velocity calculation
+│   │       ├── recommendations_service.py # Resource curation
+│   │       └── skills_service.py    # Deficit auditing & radar calculation
+│   ├── requirements.txt             # Python backend dependencies
+│   └── tests/                       # 23 pytest test cases
 │
-├── frontend/                        # React + TypeScript frontend
+├── frontend/
+│   ├── screenshots/                 # Verified headless Chrome captures
+│   ├── stitch_screens/              # Original Stitch prototypes (10 screens)
 │   ├── src/
-│   │   ├── api/
-│   │   │   └── client.ts            # Typed async API wrapper (all 9 endpoints)
 │   │   ├── components/
-│   │   │   ├── layout/
-│   │   │   │   └── AppLayout.tsx    # Sidebar navigation + responsive shell
-│   │   │   ├── ui/                  # shadcn/ui component library (15 components)
-│   │   │   └── MockBanner.tsx       # Dismissible "Preview Mode" indicator
-│   │   ├── context/
-│   │   │   └── LearnMateContext.tsx  # Global session state (React Context)
+│   │   │   ├── layout/AppLayout.tsx # Modern Craft sidebar & top header dropdown
+│   │   │   ├── CommandPalette.tsx   # ⌘K instant keyboard navigation modal
+│   │   │   └── MockBanner.tsx       # Live status banner
+│   │   ├── context/LearnMateContext.tsx # Global state & session lifecycle
 │   │   ├── pages/
-│   │   │   ├── Onboarding.tsx       # Learner assessment form
-│   │   │   ├── LearningPathway.tsx  # Milestone timeline + adapt sheet
-│   │   │   ├── SkillGap.tsx         # Gap report with priority badges
-│   │   │   ├── Recommendations.tsx  # Resource card grid
-│   │   │   ├── ProgressTracker.tsx  # Milestone checklist + AI summary
-│   │   │   └── Companion.tsx        # Conversational AI chat
-│   │   └── types/
-│   │       └── index.ts             # Shared TypeScript types (mirrors Pydantic models)
-│   ├── Dockerfile                   # Multi-stage production build (nginx)
-│   ├── nginx.conf                   # SPA routing + /api/ proxy
-│   ├── tailwind.config.js
+│   │   │   ├── LandingPage.tsx      # Marketing hero, DAG preview, live terminal
+│   │   │   ├── SignUp.tsx           # SSO & trajectory selector
+│   │   │   ├── Onboarding.tsx       # 4-step calibration stepper
+│   │   │   ├── Dashboard.tsx        # Executive dashboard & Go sandbox
+│   │   │   ├── LearningPathway.tsx  # Adaptive DAG & node inspector
+│   │   │   ├── SkillGap.tsx         # Diagnostic matrix & SVG radar
+│   │   │   ├── Recommendations.tsx  # Staff collections & resource cards
+│   │   │   ├── ProgressTracker.tsx  # Retention decay & FSRS flashcard queue
+│   │   │   ├── Companion.tsx        # Split-screen Socratic debugger
+│   │   │   └── Settings.tsx         # Inference engine & calibration settings
+│   │   ├── App.tsx                  # React Router DOM declaration
+│   │   └── index.css                # Tailwind CSS v3 direct imports
+│   ├── package.json
+│   ├── tailwind.config.js           # Stitch custom tokens & fonts
 │   └── vite.config.ts
 │
-├── backend/
-│   └── app/
-│       ├── main.py                  # FastAPI entry point, lifespan, CORS
-│       ├── core/
-│       │   ├── config.py            # Environment variable loading
-│       │   └── session.py           # In-memory session store
-│       ├── clients/
-│       │   └── langflow.py          # LangflowClient (httpx async)
-│       ├── models/                  # Pydantic v2 data models
-│       │   ├── learner.py           # LearnerProfile
-│       │   ├── pathway.py           # Milestone, Pathway
-│       │   ├── skills.py            # SkillGap, SkillGapReport
-│       │   ├── recommendations.py   # Recommendation, RecommendationList
-│       │   ├── progress.py          # ProgressState, ProgressSummary
-│       │   ├── chat.py              # ChatMessage, ChatResponse
-│       │   ├── session.py           # SessionState (aggregate)
-│       │   └── requests.py          # Request body models
-│       ├── routers/                 # FastAPI route handlers (6 files)
-│       └── services/                # AI feature business logic (5 files)
-│           └── granite_stub.py      # Direct Python fallback (no Langflow needed)
-│
 ├── langflow/
-│   ├── flows/                       # Six Langflow flow JSON exports
-│   │   ├── pathway-generation.json
-│   │   ├── skill-gap-analysis.json
-│   │   ├── course-recommendations.json
-│   │   ├── adaptive-update.json
-│   │   ├── progress-summary.json
-│   │   └── learning-companion.json
-│   ├── components/
-│   │   ├── GraniteStub.py           # Mock LLM component (_mock: true, role-aware)
-│   │   └── GraniteWatsonx.py        # Real IBM Granite component (disabled by default)
-│   ├── README.md                    # Langflow setup, import guide, blocker procedure
-│   └── BLOCKERS.md                  # Known issues and workarounds
+│   ├── flows/                       # 6 exported Langflow agentic flow JSONs
+│   └── components/
+│       ├── GraniteStub.py           # Mock custom component
+│       └── GraniteWatsonx.py        # Production watsonx.ai component
 │
 ├── docs/
-│   ├── architecture.md              # System design, data flow, session lifecycle
-│   └── watsonx-integration.md       # Step-by-step IBM Granite enablement guide
+│   ├── architecture.md              # In-depth architectural guide
+│   └── watsonx-integration.md       # Step-by-step IBM Cloud enablement guide
 │
-├── backend/tests/                   # pytest suite (23 tests)
-├── docker-compose.yml               # Three-service orchestration
-├── .env.example                     # All environment variables documented
 ├── .gitignore
-├── .gitattributes
+├── docker-compose.yml
+├── LICENSE
 └── README.md
 ```
 
 ---
 
-## 📚 Documentation
+## 🎓 Internship & Submission Demonstration Guide
 
-| Document | Description |
-|---|---|
-| **[docs/architecture.md](docs/architecture.md)** | Component diagram, full data flow walkthrough, session state lifecycle, complete API reference |
-| **[docs/watsonx-integration.md](docs/watsonx-integration.md)** | Step-by-step guide: provision watsonx.ai, enable `GraniteWatsonx.py`, swap Langflow nodes, verify live responses |
-| **[langflow/README.md](langflow/README.md)** | Langflow container setup, custom component installation, flow import/export walkthrough, blocker procedure |
-| **[http://localhost:8000/docs](http://localhost:8000/docs)** | Live Swagger UI with all endpoint schemas (requires backend running) |
+When evaluating or presenting **LearnMate AI** for the IBM SkillsBuild / Edunet Foundation internship:
 
----
+1. **Start Services Locally:**
+   ```bash
+   # Terminal 1: Backend
+   python -m uvicorn app.main:app --app-dir backend --port 8000
 
-## 🤝 Contributing
-
-Contributions are welcome. Please open an issue first to discuss what you would like to change.
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'feat: add your feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+   # Terminal 2: Frontend
+   npm --prefix frontend run dev
+   ```
+2. **Key Demonstration Flow:**
+   * **Landing Page (`/`)**: Highlight Problem Statement No. 12 alignment and view the interactive consensus terminal preview.
+   * **Calibration (`/onboarding`)**: Run the 4-step wizard to trigger `/api/session/start`, `/api/skills/analyze`, and `/api/pathway/generate`.
+   * **Dashboard (`/dashboard`)**: Showcase executive KPIs, active Go sandbox, and Google-hosted micro-lessons.
+   * **Roadmap (`/pathway`)**: Inspect consensus nodes, view the Quorum topology SVG, and trigger natural language roadmap adaptation.
+   * **AI Companion (`/companion`)**: Query the Socratic mentor and view the live mathematical quorum breakdown and split-brain partition SVG diagram.
+   * **Command Palette (`⌘K`)**: Press `⌘K` or `Ctrl+K` to jump across any of the 10 views seamlessly.
+   * **Header User Dropdown**: Click the top-right avatar to access User Settings, Calibration Wizard, or perform a clean Sign Out.
 
 ---
+
+## 📄 License & Acknowledgments
+
+* **License:** Licensed under the [MIT License](LICENSE).
+* **Edunet Foundation & IBM SkillsBuild:** Developed as part of the IBM SkillsBuild Internship Capstone program.
+* **IBM Granite Team:** Powered by IBM Granite Foundation Models and watsonx.ai architecture.
 
 <div align="center">
 
-Built with ❤️ using **IBM Granite** · **watsonx.ai** · **Langflow** · **FastAPI** · **React**
+**[⭐ Star this repository](https://github.com/sharatkumar-dev/learnmate-ai) if you found it helpful!**
 
 </div>

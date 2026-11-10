@@ -1,0 +1,458 @@
+<div class="flex flex-col w-full space-y-space-md">
+<!-- Top Command & Action Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-lowest p-space-md rounded-xl shadow-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-code-sm text-code-sm">
+<span>CURRICULUM</span>
+<span>/</span>
+<span class="text-primary font-medium">SYSTEMS-TRACK-v4.2</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant text-[10px]">SYNCED</span>
+</div>
+<div class="flex items-center gap-space-sm mt-1">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight truncate">
+          Fullstack Systems &amp; Distributed Architecture
+        </h1>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-low transition-colors" title="Switch Roadmap" type="button">
+<span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+<!-- Controls Toolbar -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Layout Mode Tabs -->
+<div class="flex items-center p-1 bg-surface-container-low rounded-lg">
+<button class="flex items-center gap-1.5 px-space-sm py-1 rounded font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm transition-all" id="btn-tree-view" type="button">
+<span class="material-symbols-outlined text-[16px]">account_tree</span>
+<span>Tree View</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-sm py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" id="btn-timeline-view" type="button">
+<span class="material-symbols-outlined text-[16px]">timeline</span>
+<span>Timeline</span>
+</button>
+<button class="flex items-center gap-1.5 px-space-sm py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" id="btn-matrix-view" type="button">
+<span class="material-symbols-outlined text-[16px]">grid_view</span>
+<span>Matrix</span>
+</button>
+</div>
+<!-- Zoom Level Selector -->
+<div class="flex items-center bg-surface-container-low rounded-lg p-0.5">
+<button class="p-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-lowest rounded transition-colors" onclick="adjustZoom(-25)" type="button">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-code-sm text-code-sm px-2 text-on-surface font-medium select-none" id="zoom-indicator">100%</span>
+<button class="p-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-lowest rounded transition-colors" onclick="adjustZoom(25)" type="button">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<!-- AI Customizer Trigger -->
+<button class="flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span>Customize with AI</span>
+</button>
+</div>
+</div>
+<!-- Filter & Sub-Nav Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm bg-surface-container-lowest px-space-md py-2.5 rounded-xl shadow-sm">
+<div class="flex flex-wrap items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mr-2">Filter</span>
+<button class="px-2.5 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm font-semibold transition-all">All Nodes (28)</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all">In Progress (4)</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all">Completed (12)</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all">Locked (12)</button>
+<div class="h-4 w-[1px] bg-surface-container-high mx-2"></div>
+<!-- Domains Dropdown Chips -->
+<div class="flex items-center gap-1">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-code-sm text-code-sm">#networking</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-code-sm text-code-sm">#consensus</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-code-sm text-code-sm">#storage</span>
+</div>
+</div>
+<!-- Toggle Prerequisites -->
+<div class="flex items-center gap-space-sm">
+<label class="flex items-center gap-2 cursor-pointer select-none">
+<input checked="" class="sr-only peer" id="toggle-prereqs" type="checkbox">
+<div class="w-8 h-4.5 bg-surface-container-high rounded-full peer peer-checked:bg-primary transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-surface-container-lowest after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:after:translate-x-3.5"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Prerequisite Lines</span>
+</label>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-low transition-colors" title="Canvas Settings" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+</div>
+<!-- Main Canvas Workspace Grid: Visual Tree + Node Inspector -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-md items-start">
+<!-- Roadmap Interactive Flow Surface (8 cols) -->
+<div class="xl:col-span-8 bg-surface-container-lowest rounded-xl p-space-lg shadow-sm relative overflow-hidden min-h-[720px]">
+<!-- Ambient Visual Background Grid -->
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Canvas Header Meta -->
+<div class="flex items-center justify-between pb-space-md relative z-10">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Execution Path Active</span>
+</div>
+<div class="flex items-center gap-3 font-code-sm text-code-sm text-on-surface-variant">
+<span>Target Velocity: <strong class="text-on-surface font-semibold">3.8 hrs/wk</strong></span>
+<span>•</span>
+<span>Overall: <strong class="text-on-surface font-semibold">48%</strong></span>
+</div>
+</div>
+<!-- Roadmap Flow Stages Container -->
+<div class="space-y-10 relative z-10 transition-transform duration-200 origin-top-left" id="roadmap-flow-container">
+<!-- ================= STAGE 1: COMPLETED ================= -->
+<div class="relative group">
+<div class="flex items-start gap-space-md">
+<!-- Stage Metric Node Anchor -->
+<div class="flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shadow-sm">
+<span class="material-symbols-outlined text-[20px] font-bold text-primary">done_all</span>
+</div>
+<div class="w-0.5 h-32 bg-primary/30 mt-2"></div>
+</div>
+<!-- Stage Body Content -->
+<div class="flex-1 pb-4">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-code-sm text-code-sm text-primary font-medium">STAGE 01</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Foundations of Concurrency &amp; Interprocess I/O</h3>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">
+                  100% Completed
+                </span>
+</div>
+<!-- Module Sub-Nodes Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm mt-space-sm">
+<!-- Node 1.1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Module 1.1</span>
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold">Memory Models &amp; Atomic Operations</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Volatile registers, CAS instructions &amp; happen-before semantics.</p>
+</div>
+<!-- Node 1.2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Module 1.2</span>
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold">Event Loops &amp; Epoll Multiplexing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Kernel event dispatch, non-blocking sockets &amp; reactor design.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= STAGE 2: IN PROGRESS (ACTIVE) ================= -->
+<div class="relative group -mt-4">
+<div class="flex items-start gap-space-md">
+<!-- Stage Metric Node Anchor (Active Pulse) -->
+<div class="flex flex-col items-center">
+<div class="relative flex items-center justify-center">
+<span class="absolute w-12 h-12 rounded-full bg-primary/20 animate-pulse"></span>
+<div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-md z-10">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+</div>
+</div>
+<div class="w-0.5 h-36 bg-surface-container-highest mt-2"></div>
+</div>
+<!-- Stage Body Content -->
+<div class="flex-1 pb-4">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-code-sm text-code-sm text-primary font-semibold">STAGE 02 • ACTIVE OBJECTIVE</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Consensus, Log Replication &amp; State Machines</h3>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-code-sm text-primary font-bold">65%</span>
+<div class="w-20 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[65%]"></div>
+</div>
+</div>
+</div>
+<!-- Module Sub-Nodes Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm mt-space-sm">
+<!-- Active Highlighted Node: Raft (Targeted in Inspector) -->
+<div class="p-space-sm rounded-lg bg-surface-container-lowest ring-2 ring-primary shadow-sm hover:shadow-md transition-all cursor-pointer relative" onclick="highlightNode('raft')">
+<div class="absolute -top-2 right-2 px-2 py-0.2 bg-primary text-on-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
+                    Selected
+                  </div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-primary font-semibold">Module 2.1 • Current</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed font-code-sm text-[11px]">80% Log Done</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold flex items-center gap-1.5">
+                    Raft Consensus Algorithm
+                    <span class="material-symbols-outlined text-primary text-[16px]">bolt</span>
+</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Leader election, term numbers &amp; quorum commit barriers.</p>
+</div>
+<!-- Node 2.2: Multi-Paxos -->
+<div class="p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer" onclick="highlightNode('paxos')">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Module 2.2</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-code-sm text-[11px]">Queued Next</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold">Multi-Paxos &amp; Leaseholders</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Round-trip latency reduction via steady-state leader pipelining.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= STAGE 3: UNLOCKED / UPCOMING ================= -->
+<div class="relative group -mt-4">
+<div class="flex items-start gap-space-md">
+<!-- Stage Metric Node Anchor -->
+<div class="flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant shadow-sm">
+<span class="material-symbols-outlined text-[18px]">lock_open</span>
+</div>
+<div class="w-0.5 h-32 bg-surface-container-high mt-2"></div>
+</div>
+<!-- Stage Body Content -->
+<div class="flex-1 pb-4">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-code-sm text-code-sm text-on-surface-variant font-medium">STAGE 03</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Distributed Storage &amp; Partition Strategies</h3>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+                  Unlocked • 0%
+                </span>
+</div>
+<!-- Module Sub-Nodes Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm mt-space-sm">
+<!-- Node 3.1 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low/70 hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Module 3.1</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold">Consistent Hashing &amp; V-Nodes</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Ring topology, murmur3 hash key bounds and data migration limits.</p>
+</div>
+<!-- Node 3.2 -->
+<div class="p-space-sm rounded-lg bg-surface-container-low/70 hover:bg-surface-container transition-all cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Module 3.2</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_forward</span>
+</div>
+<h4 class="font-headline-sm text-[14px] text-on-surface font-semibold">LSM Trees &amp; SSTable Storage Engines</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 line-clamp-1">Write amplification reduction, memtables, and compaction tiers.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= STAGE 4: LOCKED ================= -->
+<div class="relative group -mt-4 opacity-70 hover:opacity-100 transition-opacity">
+<div class="flex items-start gap-space-md">
+<!-- Stage Metric Node Anchor -->
+<div class="flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-outline shadow-sm">
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+</div>
+<!-- Stage Body Content -->
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-code-sm text-code-sm text-outline">STAGE 04</span>
+<h3 class="font-headline-sm text-headline-sm text-outline">High Availability, Split-Brain &amp; Chaos Verification</h3>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-outline font-label-sm text-label-sm">
+                  Requires Stage 03 Completion
+                </span>
+</div>
+<!-- Module Sub-Nodes Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-sm mt-space-sm">
+<div class="p-space-sm rounded-lg bg-surface-container-low/40">
+<span class="font-label-sm text-label-sm text-outline">Module 4.1</span>
+<h4 class="font-headline-sm text-[14px] text-outline font-semibold">Jepsen Analysis &amp; Partition Injection</h4>
+<p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-1">Simulating symmetric partitions and clock drift anomalies.</p>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low/40">
+<span class="font-label-sm text-label-sm text-outline">Module 4.2</span>
+<h4 class="font-headline-sm text-[14px] text-outline font-semibold">Vector Clocks &amp; CRDT Convergence</h4>
+<p class="font-body-sm text-body-sm text-outline mt-1 line-clamp-1">Conflict-free replicated datatypes in active-active topology.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Canvas Interactive Footer Tip -->
+<div class="mt-8 pt-4 flex items-center justify-between text-on-surface-variant font-code-sm text-code-sm">
+<span class="flex items-center gap-1.5">
+<kbd class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface">Space</kbd> + Drag to Pan Canvas
+        </span>
+<span>Autosaved 2m ago</span>
+</div>
+</div>
+<!-- Node Inspector Flyout / Sidecard (4 cols) -->
+<div class="xl:col-span-4 space-y-space-md">
+<!-- Primary Node Details Inspector -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-space-md">
+<!-- Inspector Header -->
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-code-sm text-code-sm font-semibold">
+                ACTIVE FOCUS
+              </span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">ID: MOD-201</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-1.5 leading-snug" id="inspector-title">
+              Raft Consensus Algorithm: Leader Election &amp; Log Replication
+            </h2>
+</div>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-low transition-colors" title="Bookmark Node" type="button">
+<span class="material-symbols-outlined text-[20px]">bookmark</span>
+</button>
+</div>
+<!-- Node Meta Badges Grid -->
+<div class="grid grid-cols-2 gap-space-xs p-space-sm bg-surface-container-low rounded-lg">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Difficulty</span>
+<p class="font-label-md text-label-md text-on-surface font-semibold mt-0.5 flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+              Advanced
+            </p>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Estimated Time</span>
+<p class="font-label-md text-label-md text-on-surface font-semibold mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+              4.5 hours
+            </p>
+</div>
+</div>
+<!-- Prerequisites Tag List -->
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Verified Prerequisites</span>
+<div class="flex flex-wrap gap-1.5 mt-1.5">
+<span class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container font-code-sm text-code-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+              RPC Basics (gRPC)
+            </span>
+<span class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container font-code-sm text-code-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+              TCP/IP Handshake &amp; Buffering
+            </span>
+<span class="flex items-center gap-1 px-2 py-1 rounded bg-surface-container font-code-sm text-code-sm text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">check</span>
+              State Machines
+            </span>
+</div>
+</div>
+<!-- Visual Mini Diagram Asset -->
+<div class="p-3 bg-surface-container-low rounded-lg space-y-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>QUORUM TOPOLOGY</span>
+<span>3 OF 5 NODES</span>
+</div>
+<!-- Inline Minimal SVG Diagram -->
+<svg class="w-full h-12 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 280 60">
+<circle cx="30" cy="30" fill="#3525cd" r="14" stroke="none"></circle>
+<text fill="#ffffff" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle" x="30" y="34">L</text>
+<line stroke="#c7c4d8" stroke-dasharray="3 3" x1="44" x2="86" y1="30" y2="30"></line>
+<circle cx="100" cy="30" fill="#eaedff" r="12" stroke="#3525cd"></circle>
+<text fill="#3525cd" font-family="monospace" font-size="9" text-anchor="middle" x="100" y="34">F1</text>
+<line stroke="#3525cd" x1="44" x2="156" y1="25" y2="15"></line>
+<circle cx="170" cy="15" fill="#eaedff" r="12" stroke="#3525cd"></circle>
+<text fill="#3525cd" font-family="monospace" font-size="9" text-anchor="middle" x="170" y="19">F2</text>
+<line stroke="#3525cd" x1="44" x2="156" y1="35" y2="45"></line>
+<circle cx="170" cy="45" fill="#eaedff" r="12" stroke="#3525cd"></circle>
+<text fill="#3525cd" font-family="monospace" font-size="9" text-anchor="middle" x="170" y="49">F3</text>
+<line stroke="#ba1a1a" stroke-dasharray="2 2" x1="44" x2="226" y1="30" y2="30"></line>
+<circle cx="240" cy="30" fill="#ffdad6" r="12" stroke="#ba1a1a"></circle>
+<text fill="#93000a" font-family="monospace" font-size="9" text-anchor="middle" x="240" y="34">✕</text>
+</svg>
+</div>
+<!-- AI Generated Synopsis Section -->
+<div class="space-y-1.5">
+<div class="flex items-center gap-1.5 text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span>AI CORE INTUITION SUMMARY</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed" id="inspector-desc">
+            Raft breaks distributed consensus into explicit independent subproblems: leader election, log replication, and safety. A single elected leader assumes total responsibility for managing the replicated log, reducing consensus to a linear commit phase through majority quorums.
+          </p>
+</div>
+<!-- Action / Assessment CTAs -->
+<div class="space-y-2 pt-2">
+<button class="w-full flex items-center justify-center gap-2 py-2 px-space-md rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:bg-primary-container transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">quiz</span>
+<span>Take Knowledge Check (5 Questions)</span>
+</button>
+<a class="w-full flex items-center justify-center gap-2 py-2 px-space-md rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container font-label-md text-label-md transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Launch Go Raft Consensus Sandbox</span>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Compact Velocity & Recommendation Widget -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm space-y-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-[14px] text-on-surface font-semibold">Learning Rhythm</span>
+<span class="font-code-sm text-code-sm text-primary font-bold">On Schedule</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Completing this node by Thursday keeps you aligned with your senior engineer target certification timeline.
+        </p>
+<div class="flex items-center gap-2 pt-1">
+<div class="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold text-[12px]">
+            AI
+          </div>
+<p class="font-body-sm text-body-sm text-on-surface italic">
+            "Review section 5.2 on Randomized Timers before taking the quiz."
+          </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Simple Vanilla Interactive Script -->
+<script>
+  let currentZoom = 100;
+  
+  function adjustZoom(delta) {
+    currentZoom = Math.min(Math.max(currentZoom + delta, 50), 150);
+    document.getElementById('zoom-indicator').innerText = currentZoom + '%';
+    const canvas = document.getElementById('roadmap-flow-container');
+    if (canvas) {
+      canvas.style.transform = `scale(${currentZoom / 100})`;
+    }
+  }
+
+  function highlightNode(type) {
+    const titleEl = document.getElementById('inspector-title');
+    const descEl = document.getElementById('inspector-desc');
+    
+    if (type === 'paxos') {
+      titleEl.innerText = "Multi-Paxos & Leaseholders: Optimizing Round-Trip Latency";
+      descEl.innerText = "Multi-Paxos skips Phase 1 (Prepare/Promise) during steady-state by electing a stable master node for a prolonged lease duration, enabling single round-trip distributed consensus across geo-distributed replicas.";
+    } else {
+      titleEl.innerText = "Raft Consensus Algorithm: Leader Election & Log Replication";
+      descEl.innerText = "Raft breaks distributed consensus into explicit independent subproblems: leader election, log replication, and safety. A single elected leader assumes total responsibility for managing the replicated log, reducing consensus to a linear commit phase through majority quorums.";
+    }
+  }
+
+  // Layout Tab Switching Micro-interaction
+  const treeBtn = document.getElementById('btn-tree-view');
+  const timeBtn = document.getElementById('btn-timeline-view');
+  const matrixBtn = document.getElementById('btn-matrix-view');
+  const viewTabs = [treeBtn, timeBtn, matrixBtn];
+
+  viewTabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      viewTabs.forEach(b => {
+        b.className = "flex items-center gap-1.5 px-space-sm py-1 rounded font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all";
+      });
+      btn.className = "flex items-center gap-1.5 px-space-sm py-1 rounded font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm transition-all";
+    });
+  });
+</script>

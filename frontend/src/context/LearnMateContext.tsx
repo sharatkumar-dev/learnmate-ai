@@ -30,6 +30,7 @@ interface LearnMateContextValue {
   setRecommendations: (r: RecommendationList) => void;
   setProgress: (p: ProgressState) => void;
   addChatMessage: (m: ChatMessage) => void;
+  signOut: () => void;
 }
 
 const LearnMateContext = createContext<LearnMateContextValue | null>(null);
@@ -85,6 +86,20 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
     setChatHistory((prev) => [...prev, m]);
   }, []);
 
+  const signOut = useCallback(() => {
+    sessionStorage.removeItem(SESSION_KEY);
+    setSessionIdState(null);
+    setProfileState(null);
+    setPathwayState(null);
+    setSkillGapsState(null);
+    setRecommendationsState(null);
+    setProgressState({
+      milestones: [],
+      completed: [],
+    });
+    setChatHistory([]);
+  }, []);
+
   return (
     <LearnMateContext.Provider
       value={{
@@ -103,6 +118,7 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
         setRecommendations,
         setProgress,
         addChatMessage,
+        signOut,
       }}
     >
       {children}

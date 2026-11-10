@@ -1,0 +1,365 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-fixed-variant":"#424751","surface-container-lowest":"#ffffff","error":"#ba1a1a","on-secondary":"#ffffff","secondary-fixed-dim":"#c0c1ff","on-error":"#ffffff","on-tertiary-container":"#d7dbe8","on-background":"#131b2e","on-primary":"#ffffff","on-primary-fixed":"#0f0069","on-surface-variant":"#464555","secondary":"#4648d4","on-tertiary-fixed":"#171c25","primary-fixed-dim":"#c3c0ff","tertiary-fixed-dim":"#c2c6d3","on-tertiary":"#ffffff","primary-fixed":"#e2dfff","inverse-primary":"#c3c0ff","surface-bright":"#faf8ff","on-secondary-fixed-variant":"#2f2ebe","outline":"#777587","on-primary-fixed-variant":"#3323cc","surface":"#faf8ff","inverse-surface":"#283044","outline-variant":"#c7c4d8","inverse-on-surface":"#eef0ff","on-error-container":"#93000a","on-secondary-fixed":"#07006c","primary":"#3525cd","tertiary-container":"#5b606b","surface-container-high":"#e2e7ff","surface-dim":"#d2d9f4","surface-container-highest":"#dae2fd","on-surface":"#131b2e","secondary-fixed":"#e1e0ff","surface-container":"#eaedff","error-container":"#ffdad6","tertiary-fixed":"#dee2ef","secondary-container":"#6063ee","primary-container":"#4f46e5","tertiary":"#434853","surface-tint":"#4d44e3","surface-container-low":"#f2f3ff","background":"#faf8ff","on-secondary-container":"#fffbff","on-primary-container":"#dad7ff","surface-variant":"#dae2fd"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"margin-sm":"1rem","space-md":"1rem","space-lg":"1.5rem","space-xs":"0.25rem","space-xl":"2.5rem","gutter-sm":"1rem","margin":"2rem","space-sm":"0.5rem","gutter":"1.5rem"},"fontFamily":{"headline-xl":["Plus Jakarta Sans"],"display-lg-mobile":["Plus Jakarta Sans"],"label-sm":["Inter"],"display-lg":["Plus Jakarta Sans"],"code-sm":["JetBrains Mono"],"headline-lg":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],"body-sm":["Inter"],"body-lg":["Inter"],"label-md":["Inter"],"headline-sm":["Plus Jakarta Sans"],"body-md":["Inter"],"headline-xl-mobile":["Plus Jakarta Sans"]},"fontSize":{"headline-xl":["32px",{"lineHeight":"40px","letterSpacing":"-0.025em","fontWeight":"600"}],"display-lg-mobile":["30px",{"lineHeight":"38px","letterSpacing":"-0.02em","fontWeight":"700"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"600"}],"display-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.03em","fontWeight":"700"}],"code-sm":["12px",{"lineHeight":"18px","letterSpacing":"0em","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.015em","fontWeight":"600"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"-0.011em","fontWeight":"400"}],"label-md":["13px",{"lineHeight":"18px","letterSpacing":"0.005em","fontWeight":"500"}],"headline-sm":["16px",{"lineHeight":"24px","letterSpacing":"-0.01em","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"-0.006em","fontWeight":"400"}],"headline-xl-mobile":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><div class="min-h-screen flex flex-col bg-surface"><header class="sticky top-0 left-0 right-0 h-16 z-40 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 flex items-center justify-between px-6 md:px-10"><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm shrink-0"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path><path d="M12 3v4" stroke-width="1.5"></path></svg></div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">LearnMate</span><span class="px-space-xs py-0.5 rounded-full bg-surface-container text-on-surface-variant font-code-sm text-code-sm border border-outline-variant/40 ml-1">v2.4</span></div><div class="hidden md:flex items-center gap-2"><div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/40 text-primary font-label-sm text-label-sm font-semibold"><span class="material-symbols-outlined text-[15px]">tune</span><span>Calibration Setup</span></div><span class="text-outline text-label-sm">•</span><span class="font-code-sm text-code-sm text-primary font-medium">Step 2 of 4</span></div><div class="flex items-center gap-4"><a href="#learnmate-dashboard" data-route="learnmate-dashboard" class="flex items-center gap-1 text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm transition-colors px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low"><span class="material-symbols-outlined text-[18px]">close</span><span class="hidden sm:inline">Exit to Dashboard</span></a><div class="h-5 w-[1px] bg-outline-variant/40"></div><div class="flex items-center gap-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant/40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVMlySAvthLBnT02K-Y39Sn3Zwboj8jDxUos2n5AUipsMS4QEEaQTWOmkAdCjGY90T6HB-aGpRS--3AhvWsgKfT3J-PaiAbfsXkMGnpAEKrXoRoqSBAJViWI2uuOJTUM5fQMIGhtsD-sojp57rvahNFXa5RzQCQF97e4G7jpHIu1TcE3twOoXV1MB9HfKCONu_DGq1bU2CjDAbEdKBP5QtrCaWbmgTr1RaYVKtYJ7G"><span class="hidden lg:inline font-label-md text-label-md text-on-surface font-medium">Alex R.</span></div></div></header><main class="w-full flex-1 px-space-lg py-space-lg max-w-[1280px] mx-auto pt-6"><div class="flex flex-col w-full pb-16">
+<!-- Stepper Header Section -->
+<div class="w-full max-w-4xl mx-auto mb-10 pt-4">
+<div class="flex items-center justify-between relative px-2">
+<!-- Background Connecting Line -->
+<div class="absolute left-8 right-8 top-1/2 -translate-y-1/2 h-1 bg-surface-container-high rounded-full -z-0">
+<!-- Active Progress Fill (38%) -->
+<div class="h-full bg-primary rounded-full transition-all duration-500 w-[38%]"></div>
+</div>
+<!-- Step 1: Completed -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-md transition-transform duration-200 group-hover:scale-105">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="mt-2.5 font-label-sm text-label-sm text-on-surface font-semibold tracking-tight">Objectives</span>
+<span class="font-code-sm text-code-sm text-primary font-medium text-[10px]">Complete</span>
+</div>
+<!-- Step 2: Active -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest text-primary shadow-lg flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+</div>
+<span class="mt-2.5 font-label-sm text-label-sm text-primary font-bold tracking-tight">Experience &amp; Baseline</span>
+<span class="font-code-sm text-code-sm text-primary font-medium text-[10px]">Step 2 of 4</span>
+</div>
+<!-- Step 3: Upcoming -->
+<div class="relative z-10 flex flex-col items-center opacity-60">
+<div class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface-variant flex items-center justify-center shadow-sm">
+<span class="font-label-sm text-label-sm font-semibold">3</span>
+</div>
+<span class="mt-2.5 font-label-sm text-label-sm text-on-surface-variant font-medium tracking-tight">Schedule</span>
+<span class="font-code-sm text-code-sm text-outline text-[10px]">Upcoming</span>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="relative z-10 flex flex-col items-center opacity-60">
+<div class="w-9 h-9 rounded-full bg-surface-container-low text-on-surface-variant flex items-center justify-center shadow-sm">
+<span class="font-label-sm text-label-sm font-semibold">4</span>
+</div>
+<span class="mt-2.5 font-label-sm text-label-sm text-on-surface-variant font-medium tracking-tight">AI Engine</span>
+<span class="font-code-sm text-code-sm text-outline text-[10px]">Upcoming</span>
+</div>
+</div>
+</div>
+<!-- Main Wizard Elevated Card -->
+<div class="w-full max-w-4xl mx-auto bg-surface-container-lowest rounded-xl shadow-xl p-8 md:p-12 relative overflow-hidden">
+<!-- Atmospheric Ambient Accent Glow -->
+<div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-fixed/30 blur-3xl pointer-events-none -z-0"></div>
+<div class="relative z-10">
+<!-- Section Title & Narrative -->
+<div class="max-w-2xl mb-10">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/60 text-on-primary-fixed font-label-sm text-label-sm font-semibold mb-4">
+<span class="material-symbols-outlined text-[15px]">psychology</span>
+<span>CALIBRATION PROTOCOL</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight mb-2">
+          What is your primary goal and current proficiency level?
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          LearnMate's AI engine tailors your curriculum, pacing, and diagnostic challenges to match your exact starting baseline and professional targets.
+        </p>
+</div>
+<form class="space-y-10" id="wizard-form" onsubmit="event.preventDefault();">
+<!-- Field 1: Primary Target Objective (Cards) -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">
+              1. Core Learning Trajectory
+            </label>
+<span class="font-code-sm text-code-sm text-outline">Select one option</span>
+</div>
+<div aria-label="Learning Trajectory" class="grid grid-cols-1 md:grid-cols-3 gap-4" role="radiogroup">
+<!-- Goal Card 1 -->
+<label class="relative flex flex-col p-5 rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all duration-200 shadow-sm hover:shadow group goal-card">
+<input checked="" class="sr-only" name="goal" type="radio" value="career">
+<div class="flex items-center justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest text-primary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[22px]">rocket_launch</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center radio-indicator">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Career Transition &amp; Staff Roles</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Targeted preparation for Staff/Principal roles in distributed systems, concurrency, and high-scale architecture.
+              </p>
+<div class="mt-4 pt-3 flex items-center gap-1.5 font-code-sm text-code-sm text-primary font-medium">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>Tier-1 Engineering Path</span>
+</div>
+</label>
+<!-- Goal Card 2 -->
+<label class="relative flex flex-col p-5 rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all duration-200 shadow-sm hover:shadow group goal-card">
+<input class="sr-only" name="goal" type="radio" value="tech">
+<div class="flex items-center justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest text-secondary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[22px]">terminal</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-transparent flex items-center justify-center radio-indicator">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Mastering Specific Stacks</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Deep dive execution into Rust memory semantics, Go runtime internals, and low-level cloud primitives.
+              </p>
+<div class="mt-4 pt-3 flex items-center gap-1.5 font-code-sm text-code-sm text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[14px]">code</span>
+<span>Language &amp; Runtime Mastery</span>
+</div>
+</label>
+<!-- Goal Card 3 -->
+<label class="relative flex flex-col p-5 rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all duration-200 shadow-sm hover:shadow group goal-card">
+<input class="sr-only" name="goal" type="radio" value="research">
+<div class="flex items-center justify-between mb-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest text-tertiary flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[22px]">science</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-surface-container-high text-transparent flex items-center justify-center radio-indicator">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">Academic &amp; Research Focus</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Seminal CS whitepapers, formal verification, Raft/Paxos proofs, and consensus mechanisms.
+              </p>
+<div class="mt-4 pt-3 flex items-center gap-1.5 font-code-sm text-code-sm text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[14px]">history_edu</span>
+<span>Theoretical Foundations</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Field 2: Experience Level Slider / Segmented Controls -->
+<div class="p-6 rounded-lg bg-surface-container-low space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<label class="font-label-md text-label-md text-on-surface font-semibold block">
+                2. Professional Software Experience
+              </label>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Determines the depth of technical terminology and introductory scaffolding in your modules.
+              </p>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container text-primary font-code-sm text-code-sm font-semibold shadow-sm" id="level-badge">
+              Mid-level (2-4 yrs)
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-2 p-1.5 rounded-lg bg-surface-container-lowest shadow-sm">
+<button class="level-btn py-2.5 px-3 rounded text-center transition-all duration-200 font-label-md text-label-md text-on-surface-variant hover:text-on-surface" data-level="Beginner (0-1 yrs)" type="button">
+<span class="font-semibold block">Beginner</span>
+<span class="font-code-sm text-code-sm text-outline text-[11px]">0-1 years exp</span>
+</button>
+<button class="level-btn active py-2.5 px-3 rounded text-center transition-all duration-200 font-label-md text-label-md bg-primary text-on-primary shadow-sm" data-level="Mid-level (2-4 yrs)" type="button">
+<span class="font-semibold block">Mid-level</span>
+<span class="font-code-sm text-code-sm text-on-primary-container text-[11px]">2-4 years exp</span>
+</button>
+<button class="level-btn py-2.5 px-3 rounded text-center transition-all duration-200 font-label-md text-label-md text-on-surface-variant hover:text-on-surface" data-level="Senior (5+ yrs)" type="button">
+<span class="font-semibold block">Senior &amp; Above</span>
+<span class="font-code-sm text-code-sm text-outline text-[11px]">5+ years exp</span>
+</button>
+</div>
+</div>
+<!-- Field 3: Preferred Learning Style Tags -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">
+              3. Preferred Learning Modalities
+            </label>
+<span class="font-code-sm text-code-sm text-outline">Multi-select available</span>
+</div>
+<div class="flex flex-wrap gap-2.5" id="style-tags-container">
+<button class="style-tag active flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>Hands-on coding labs</span>
+</button>
+<button class="style-tag flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">schema</span>
+<span>Visual mental models</span>
+</button>
+<button class="style-tag flex items-center gap-2 px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">style</span>
+<span>Interactive flashcards</span>
+</button>
+<button class="style-tag active flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-sm transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+<span>Socratic AI dialogues</span>
+</button>
+</div>
+</div>
+<!-- Field 4: Weekly Time Commitment (3 segmented cards) -->
+<div class="space-y-3">
+<label class="font-label-md text-label-md text-on-surface uppercase tracking-wider font-semibold">
+            4. Weekly Dedicated Commitment
+          </label>
+<div aria-label="Commitment level" class="grid grid-cols-1 md:grid-cols-3 gap-3" role="radiogroup">
+<!-- 3-5 hrs/week -->
+<label class="commitment-card relative flex items-center justify-between p-4 rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all duration-150 shadow-sm">
+<input class="sr-only" name="commitment" type="radio" value="casual">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline text-[22px]">timer</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">3-5 hrs / week</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Casual &amp; Steady</p>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-surface-container-high commit-dot"></div>
+</label>
+<!-- 6-10 hrs/week (Default) -->
+<label class="commitment-card active relative flex items-center justify-between p-4 rounded-lg bg-primary-fixed/40 cursor-pointer transition-all duration-150 shadow-sm">
+<input checked="" class="sr-only" name="commitment" type="radio" value="accelerated">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[22px]">speed</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">6-10 hrs / week</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Accelerated</p>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-primary commit-dot flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-on-primary"></div>
+</div>
+</label>
+<!-- 12+ hrs/week -->
+<label class="commitment-card relative flex items-center justify-between p-4 rounded-lg bg-surface-container-low hover:bg-surface-container cursor-pointer transition-all duration-150 shadow-sm">
+<input class="sr-only" name="commitment" type="radio" value="intensive">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline text-[22px]">bolt</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">12+ hrs / week</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Intensive Immersion</p>
+</div>
+</div>
+<div class="w-4 h-4 rounded-full bg-surface-container-high commit-dot"></div>
+</label>
+</div>
+</div>
+<!-- Interactive AI Diagnostics Estimate Box -->
+<div class="p-5 rounded-lg bg-surface-container flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[24px] mt-0.5">auto_awesome</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-0.5">Adaptive Curricula Engine</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">
+                Based on your selections, we will compile <span class="font-medium text-on-surface">14 targeted milestones</span> and prepare an initial 10-minute diagnostic session to skip mastered fundamentals.
+              </p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-2 self-end md:self-auto">
+<span class="px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface font-code-sm text-code-sm shadow-sm">
+              Est. ~14 Weeks
+            </span>
+</div>
+</div>
+<!-- Wizard Action Bar -->
+<div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4"><a href="#learnmate-dashboard" data-route="learnmate-dashboard" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 transition-all duration-150 group"><span class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-0.5">arrow_back</span><span>Back</span></a><div class="flex items-center gap-3 w-full sm:w-auto justify-end"><a href="#learnmate-dashboard" data-route="learnmate-dashboard" class="px-4 py-2.5 rounded-lg hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors text-center">Skip to Dashboard</a><a href="#learnmate-dashboard" data-route="learnmate-dashboard" class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-150 active:scale-[0.99]" id="continue-btn"><span>Continue to Dashboard</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span></a></div></div>
+</form>
+</div>
+</div>
+<!-- Supporting Footer Guarantee Info -->
+<div class="w-full max-w-4xl mx-auto mt-6 px-4 flex flex-col sm:flex-row items-center justify-between text-on-surface-variant font-body-sm text-body-sm gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">tune</span>
+<span>You can retune baseline preferences or pause your roadmap anytime from Settings.</span>
+</div>
+<div class="flex items-center gap-4 text-outline font-code-sm text-code-sm">
+<span>Auto-saved 2s ago</span>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Setup Documentation</a>
+</div>
+</div>
+</div>
+<script>
+  // Goal Selection Radio Logic
+  const goalCards = document.querySelectorAll('.goal-card');
+  goalCards.forEach(card => {
+    card.addEventListener('click', () => {
+      goalCards.forEach(c => {
+        const indicator = c.querySelector('.radio-indicator');
+        indicator.classList.remove('bg-primary', 'text-on-primary');
+        indicator.classList.add('bg-surface-container-high', 'text-transparent');
+      });
+      const activeIndicator = card.querySelector('.radio-indicator');
+      activeIndicator.classList.add('bg-primary', 'text-on-primary');
+      activeIndicator.classList.remove('bg-surface-container-high', 'text-transparent');
+    });
+  });
+
+  // Experience Level Segmented Buttons
+  const levelBtns = document.querySelectorAll('.level-btn');
+  const levelBadge = document.getElementById('level-badge');
+  levelBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      levelBtns.forEach(b => {
+        b.className = 'level-btn py-2.5 px-3 rounded text-center transition-all duration-200 font-label-md text-label-md text-on-surface-variant hover:text-on-surface';
+      });
+      btn.className = 'level-btn active py-2.5 px-3 rounded text-center transition-all duration-200 font-label-md text-label-md bg-primary text-on-primary shadow-sm';
+      if (levelBadge) {
+        levelBadge.textContent = btn.getAttribute('data-level');
+      }
+    });
+  });
+
+  // Learning Style Tag Toggle
+  const styleTags = document.querySelectorAll('.style-tag');
+  styleTags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      const isActive = tag.classList.contains('active');
+      if (isActive) {
+        tag.classList.remove('active', 'bg-primary', 'text-on-primary');
+        tag.classList.add('bg-surface-container-low', 'hover:bg-surface-container', 'text-on-surface');
+      } else {
+        tag.classList.add('active', 'bg-primary', 'text-on-primary');
+        tag.classList.remove('bg-surface-container-low', 'hover:bg-surface-container', 'text-on-surface');
+      }
+    });
+  });
+
+  // Commitment Card Selection
+  const commitmentCards = document.querySelectorAll('.commitment-card');
+  commitmentCards.forEach(card => {
+    card.addEventListener('click', () => {
+      commitmentCards.forEach(c => {
+        c.classList.remove('active', 'bg-primary-fixed/40');
+        c.classList.add('bg-surface-container-low', 'hover:bg-surface-container');
+        const dot = c.querySelector('.commit-dot');
+        dot.className = 'w-4 h-4 rounded-full bg-surface-container-high commit-dot';
+        dot.innerHTML = '';
+        const icon = c.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.classList.remove('text-primary');
+          icon.classList.add('text-outline');
+        }
+      });
+      card.classList.add('active', 'bg-primary-fixed/40');
+      card.classList.remove('bg-surface-container-low', 'hover:bg-surface-container');
+      const activeDot = card.querySelector('.commit-dot');
+      activeDot.className = 'w-4 h-4 rounded-full bg-primary commit-dot flex items-center justify-center';
+      activeDot.innerHTML = '<div class="w-1.5 h-1.5 rounded-full bg-on-primary"></div>';
+      const activeIcon = card.querySelector('.material-symbols-outlined');
+      if (activeIcon) {
+        activeIcon.classList.remove('text-outline');
+        activeIcon.classList.add('text-primary');
+      }
+    });
+  });
+
+  // Micro-feedback on Continue
+  const continueBtn = document.getElementById('continue-btn');
+  if (continueBtn) {
+    continueBtn.addEventListener('click', () => {
+      const origText = continueBtn.innerHTML;
+      continueBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span><span>Calibrating...</span>';
+      setTimeout(() => {
+        continueBtn.innerHTML = origText;
+      }, 1000);
+    });
+  }
+</script></main></div>
+
+<div id="command-palette-modal" class="fixed inset-0 z-50 hidden bg-on-background/40 backdrop-blur-sm flex items-start justify-center pt-24 px-4" onclick="if(event.target===this)this.classList.add('hidden')"><div class="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-xl border border-outline-variant/30 overflow-hidden"><div class="flex items-center gap-3 px-4 py-3 border-b border-outline-variant/20"><span class="material-symbols-outlined text-outline text-[20px]">search</span><input id="command-palette-input" class="w-full bg-transparent border-0 text-on-surface font-body-md focus:outline-none placeholder:text-outline" placeholder="Search actions, modules, or shortcuts..." type="text"><kbd class="px-2 py-0.5 rounded bg-surface-container-low text-outline font-code-sm text-[11px] border border-outline-variant/40 cursor-pointer" onclick="document.getElementById('command-palette-modal').classList.add('hidden')">ESC</kbd></div><div class="p-2 max-h-80 overflow-y-auto space-y-1"><div class="px-3 py-1.5 text-[11px] font-label-sm uppercase tracking-wider text-outline font-semibold">Navigation</div><a href="#learnmate-dashboard" data-route="learnmate-dashboard" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-container-low text-on-surface transition-colors"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px] text-primary">dashboard</span><span class="font-body-sm text-body-sm">Go to Dashboard</span></div><span class="font-code-sm text-[11px] text-outline">G D</span></a><a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-container-low text-on-surface transition-colors"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px] text-primary">alt_route</span><span class="font-body-sm text-body-sm">View Learning Roadmap</span></div><span class="font-code-sm text-[11px] text-outline">G R</span></a><a href="#" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-container-low text-on-surface transition-colors"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px] text-primary">local_library</span><span class="font-body-sm text-body-sm">Resource Library</span></div><span class="font-code-sm text-[11px] text-outline">G L</span></a><div class="px-3 pt-2 pb-1 text-[11px] font-label-sm uppercase tracking-wider text-outline font-semibold">Calibration Actions</div><button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-container-low text-on-surface text-left transition-colors" onclick="document.getElementById('wizard-form').reset(); document.getElementById('command-palette-modal').classList.add('hidden');"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px] text-secondary">restart_alt</span><span class="font-body-sm text-body-sm">Reset Current Selections</span></div><span class="font-code-sm text-[11px] text-outline">⌘R</span></button><button type="button" class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-container-low text-on-surface text-left transition-colors" onclick="document.getElementById('continue-btn')?.click(); document.getElementById('command-palette-modal').classList.add('hidden');"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[18px] text-primary">play_arrow</span><span class="font-body-sm text-body-sm">Proceed to Next Calibration Step</span></div><span class="font-code-sm text-[11px] text-outline">↵</span></button></div></div></div><script>(function(){const btn=document.getElementById('quick-find-btn');const modal=document.getElementById('command-palette-modal');const input=document.getElementById('command-palette-input');function openModal(){if(modal){modal.classList.remove('hidden');input?.focus();}}function closeModal(){if(modal)modal.classList.add('hidden');}if(btn){btn.addEventListener('click',openModal);}window.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();if(modal&&modal.classList.contains('hidden')){openModal();}else{closeModal();}}if(e.key==='Escape'){closeModal();}});})();</script>
+
+
+
+</body></html>
