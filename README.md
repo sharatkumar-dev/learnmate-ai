@@ -6,6 +6,7 @@
 
 *An intelligent, adaptive learning ecosystem that dynamically builds, monitors, and optimizes personalized engineering curricula — powered by **IBM Granite 3.0** and **watsonx.ai**.*
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://learnmate-ai-skn.vercel.app/)
 [![IBM SkillsBuild](https://img.shields.io/badge/IBM_SkillsBuild-Internship_Capstone-052FAD?style=for-the-badge&logo=ibm&logoColor=white)](https://skillsbuild.org)
 [![Problem Statement](https://img.shields.io/badge/Edunet_Foundation-Problem_Statement_12-FF5722?style=for-the-badge)](https://edunetfoundation.org)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -15,6 +16,10 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Modern_Craft-06b6d4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Tests](https://img.shields.io/badge/pytest-23_passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](backend/tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+
+<br/>
+
+### 🌐 **[Explore the Live Web Platform → https://learnmate-ai-skn.vercel.app](https://learnmate-ai-skn.vercel.app)**
 
 </div>
 
