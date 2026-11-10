@@ -1,0 +1,11 @@
+{
+  "name": "learnmate-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agentic AI-powered personalized learning pathway platform built with IBM Granite, watsonx.ai, and Langflow.",
+  "scripts": {
+    "build": "npm --prefix frontend run build",
+    "dev": "npm --prefix frontend run dev",
+    "start": "npm --prefix frontend run preview"
+  }
+}
