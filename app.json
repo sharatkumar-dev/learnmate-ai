@@ -1,0 +1,49 @@
+{
+  "name": "learnmate-ai",
+  "description": "Agentic AI-Powered Personalized Course Pathways Platform built with IBM Granite, watsonx.ai, and Langflow.",
+  "repository": "https://github.com/sharatkumar-dev/learnmate-ai",
+  "website": "https://learnmate-ai-skn.vercel.app",
+  "keywords": [
+    "ibm-skillsbuild",
+    "edunet-foundation",
+    "ibm-granite",
+    "watsonx",
+    "langflow",
+    "agentic-ai",
+    "education",
+    "personalized-learning"
+  ],
+  "env": {
+    "LANGFLOW_BASE_URL": {
+      "description": "Base URL of local or deployed Langflow server",
+      "value": "http://localhost:7860",
+      "required": false
+    },
+    "WATSONX_API_KEY": {
+      "description": "IBM Cloud API key for watsonx.ai",
+      "required": false
+    },
+    "WATSONX_PROJECT_ID": {
+      "description": "IBM watsonx.ai Project ID",
+      "required": false
+    },
+    "WATSONX_URL": {
+      "description": "IBM Cloud regional service endpoint",
+      "value": "https://us-south.ml.cloud.ibm.com",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
