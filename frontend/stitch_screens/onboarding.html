@@ -325,7 +325,7 @@
         c.classList.add('bg-surface-container-low', 'hover:bg-surface-container');
         const dot = c.querySelector('.commit-dot');
         dot.className = 'w-4 h-4 rounded-full bg-surface-container-high commit-dot';
-        dot.innerHTML = '';
+        dot.replaceChildren();
         const icon = c.querySelector('.material-symbols-outlined');
         if (icon) {
           icon.classList.remove('text-primary');

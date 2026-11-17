@@ -437,7 +437,7 @@
             textElement.classList.remove('line-through', 'text-outline');
             textElement.classList.add('text-on-surface');
             btn.className = 'mt-0.5 w-4 h-4 rounded bg-surface-container-lowest shadow-sm flex items-center justify-center shrink-0 border border-outline-variant/60';
-            btn.innerHTML = '';
+            btn.replaceChildren();
           } else {
             textElement.classList.add('line-through', 'text-outline');
             textElement.classList.remove('text-on-surface');

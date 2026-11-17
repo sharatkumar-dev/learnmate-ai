@@ -68,7 +68,7 @@
 <span class="font-code-sm text-code-sm text-primary font-medium" id="pw-strength-label">Secure strength</span>
 </div>
 <div class="relative">
-<input class="w-full rounded-lg bg-surface-container-low px-3 py-2 pr-10 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary font-body-md text-body-md transition-all" id="password-input" placeholder="Min. 8 characters + symbols" type="password">
+<input class="w-full rounded-lg bg-surface-container-low px-3 py-2 pr-10 text-on-surface placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary font-body-md text-body-md transition-all" id="password-input" autocomplete="new-password" placeholder="Min. 8 characters + symbols" type="password">
 <button class="absolute right-2.5 top-2 text-on-surface-variant hover:text-on-surface" id="toggle-pw-btn" onclick="const el = document.getElementById('password-input'); el.type = el.type === 'password' ? 'text' : 'password';" type="button">
 <span class="material-symbols-outlined text-headline-sm">visibility</span>
 </button>

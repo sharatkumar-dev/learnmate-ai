@@ -80,7 +80,12 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle scrollbars */
+/* Subtle scrollbars (Standard + WebKit fallback) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(119, 117, 135, 0.2) transparent;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
