@@ -312,10 +312,6 @@ export function LandingPage() {
                 href="#curriculum"
               >
                 <span className="inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse" />
-                <span className="font-label-sm text-label-sm uppercase tracking-wider font-semibold">
-                  v2.4 Engine Live
-                </span>
-                <span className="text-outline text-label-sm">·</span>
                 <span className="font-label-md text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">
                   Autonomous Learning Graphs · 100% Free Public Beta
                 </span>

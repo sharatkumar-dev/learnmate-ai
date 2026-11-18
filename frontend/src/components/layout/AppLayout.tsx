@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useLearnMate } from '@/context/LearnMateContext';
 import { MockBanner } from '@/components/MockBanner';
 import { CommandPalette } from '@/components/CommandPalette';
@@ -25,9 +25,12 @@ export function AppLayout() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [headerDropdownOpen, setHeaderDropdownOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
-  const { profile, isMockMode, signOut } = useLearnMate();
+  const { profile, isMockMode, signOut, user, isAuthenticated } = useLearnMate();
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -50,8 +53,12 @@ export function AppLayout() {
     };
   }, [headerDropdownOpen]);
 
-  const userName = profile?.target_role ? `Learner (${profile.target_role})` : 'Alex Rivera';
-  const userInitials = profile?.target_role ? profile.target_role.slice(0, 2).toUpperCase() : 'AR';
+  if (!isAuthenticated) {
+    return <Navigate to="/signup" replace state={{ from: location.pathname }} />;
+  }
+
+  const userName = user?.fullName || (profile?.target_role ? `Learner (${profile.target_role})` : 'Learner');
+  const userInitials = user?.fullName ? user.fullName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) : 'LM';
 
   return (
     <div className="min-h-screen flex bg-surface font-body text-on-surface antialiased">

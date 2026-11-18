@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { useLearnMate } from '@/context/LearnMateContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { LandingPage } from '@/pages/LandingPage';
 import { SignUp } from '@/pages/SignUp';
@@ -10,6 +11,15 @@ import { Recommendations } from '@/pages/Recommendations';
 import { ProgressTracker } from '@/pages/ProgressTracker';
 import { Companion } from '@/pages/Companion';
 import { Settings } from '@/pages/Settings';
+
+
+function ProtectedOnboarding() {
+  const { isAuthenticated } = useLearnMate();
+  if (!isAuthenticated) {
+    return <Navigate to="/signup" replace />;
+  }
+  return <Onboarding />;
+}
 
 const router = createBrowserRouter([
   // Public Landing & Marketing
@@ -29,7 +39,7 @@ const router = createBrowserRouter([
   // Standalone Calibration Onboarding Flow
   {
     path: '/onboarding',
-    element: <Onboarding />,
+    element: <ProtectedOnboarding />,
   },
   // Protected Application Shell
   {

@@ -98,9 +98,7 @@ export function Onboarding() {
           <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">
             LearnMate
           </span>
-          <span className="px-space-xs py-0.5 rounded-full bg-surface-container text-on-surface-variant font-code-sm text-code-sm border border-outline-variant/40 ml-1">
-            v2.4
-          </span>
+          
         </div>
 
         <div className="hidden md:flex items-center gap-2">

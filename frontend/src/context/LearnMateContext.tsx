@@ -14,7 +14,21 @@ import type {
   ChatMessage,
 } from '@/types/index';
 
-interface LearnMateContextValue {
+export interface AuthUser {
+  fullName: string;
+  email: string;
+  trajectory?: string;
+  token?: string;
+}
+
+export interface StoredAccount {
+  fullName: string;
+  email: string;
+  password: string;
+  trajectory: string;
+}
+
+export interface LearnMateContextValue {
   sessionId: string | null;
   profile: LearnerProfile | null;
   pathway: Pathway | null;
@@ -23,6 +37,8 @@ interface LearnMateContextValue {
   progress: ProgressState;
   chatHistory: ChatMessage[];
   isMockMode: boolean;
+  user: AuthUser | null;
+  isAuthenticated: boolean;
   setSessionId: (id: string) => void;
   setProfile: (p: LearnerProfile) => void;
   setPathway: (p: Pathway) => void;
@@ -30,17 +46,42 @@ interface LearnMateContextValue {
   setRecommendations: (r: RecommendationList) => void;
   setProgress: (p: ProgressState) => void;
   addChatMessage: (m: ChatMessage) => void;
+  signUpUser: (fullName: string, email: string, password: string, trajectory: string) => { success: boolean; error?: string };
+  signInUser: (email: string, password: string) => { success: boolean; error?: string };
   signOut: () => void;
 }
 
 const LearnMateContext = createContext<LearnMateContextValue | null>(null);
 
 const SESSION_KEY = 'learnmate_session_id';
+const AUTH_KEY = 'learnmate_auth';
+const ACCOUNTS_KEY = 'learnmate_accounts';
+
+function getStoredAuthUser(): AuthUser | null {
+  try {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function getStoredAccounts(): StoredAccount[] {
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
 
 export function LearnMateProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionIdState] = useState<string | null>(
     () => sessionStorage.getItem(SESSION_KEY),
   );
+  const [user, setUser] = useState<AuthUser | null>(getStoredAuthUser);
   const [profile, setProfileState] = useState<LearnerProfile | null>(null);
   const [pathway, setPathwayState] = useState<Pathway | null>(null);
   const [skillGaps, setSkillGapsState] = useState<SkillGapReport | null>(null);
@@ -51,6 +92,8 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
     completed: [],
   });
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+
+  const isAuthenticated = !!user;
 
   const isMockMode =
     (pathway?._mock ?? false) ||
@@ -86,8 +129,88 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
     setChatHistory((prev) => [...prev, m]);
   }, []);
 
+  const signUpUser = useCallback(
+    (fullName: string, email: string, password: string, trajectory: string) => {
+      const normalizedEmail = email.trim().toLowerCase();
+      const accounts = getStoredAccounts();
+
+      if (accounts.some((acc) => acc.email === normalizedEmail)) {
+        return {
+          success: false,
+          error: 'An account with this email already exists. Please sign in instead.',
+        };
+      }
+
+      const newAccount: StoredAccount = {
+        fullName: fullName.trim(),
+        email: normalizedEmail,
+        password,
+        trajectory,
+      };
+
+      accounts.push(newAccount);
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+
+      const authUser: AuthUser = {
+        fullName: newAccount.fullName,
+        email: newAccount.email,
+        trajectory: newAccount.trajectory,
+        token: 'auth_' + Math.random().toString(36).substring(2),
+      };
+
+      localStorage.setItem(AUTH_KEY, JSON.stringify(authUser));
+      localStorage.setItem(
+        'learnmate_user',
+        JSON.stringify({ name: authUser.fullName, trajectory: authUser.trajectory }),
+      );
+      setUser(authUser);
+
+      return { success: true };
+    },
+    [],
+  );
+
+  const signInUser = useCallback((email: string, password: string) => {
+    const normalizedEmail = email.trim().toLowerCase();
+    const accounts = getStoredAccounts();
+
+    const account = accounts.find((acc) => acc.email === normalizedEmail);
+    if (!account) {
+      return {
+        success: false,
+        error: 'No account found with this email. Please sign up first.',
+      };
+    }
+
+    if (account.password !== password) {
+      return {
+        success: false,
+        error: 'Incorrect password. Please verify your credentials and try again.',
+      };
+    }
+
+    const authUser: AuthUser = {
+      fullName: account.fullName,
+      email: account.email,
+      trajectory: account.trajectory,
+      token: 'auth_' + Math.random().toString(36).substring(2),
+    };
+
+    localStorage.setItem(AUTH_KEY, JSON.stringify(authUser));
+    localStorage.setItem(
+      'learnmate_user',
+      JSON.stringify({ name: authUser.fullName, trajectory: authUser.trajectory }),
+    );
+    setUser(authUser);
+
+    return { success: true };
+  }, []);
+
   const signOut = useCallback(() => {
     sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem('learnmate_user');
+    setUser(null);
     setSessionIdState(null);
     setProfileState(null);
     setPathwayState(null);
@@ -111,6 +234,8 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
         progress,
         chatHistory,
         isMockMode,
+        user,
+        isAuthenticated,
         setSessionId,
         setProfile,
         setPathway,
@@ -118,6 +243,8 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
         setRecommendations,
         setProgress,
         addChatMessage,
+        signUpUser,
+        signInUser,
         signOut,
       }}
     >
