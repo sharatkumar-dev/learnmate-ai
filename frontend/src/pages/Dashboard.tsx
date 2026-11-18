@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface Milestone {
@@ -10,52 +10,137 @@ interface Milestone {
   completed: boolean;
 }
 
+function getInitialDashboardData() {
+  let name = 'Alex Rivera';
+  let trajectory = 'Distributed Systems';
+  let commitment: 'casual' | 'accelerated' | 'intensive' = 'accelerated';
+  let experience = 'Mid-level (2-4 yrs)';
+  let customMilestones: Milestone[] | null = null;
+
+  try {
+    const storedUser = localStorage.getItem('learnmate_user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      if (parsed.name) name = parsed.name;
+      if (parsed.trajectory) trajectory = parsed.trajectory;
+      if (parsed.commitment) commitment = parsed.commitment;
+      if (parsed.experienceLevel) experience = parsed.experienceLevel;
+    }
+
+    const storedOnboarding = localStorage.getItem('learnmate_onboarding_data');
+    if (storedOnboarding) {
+      const ob = JSON.parse(storedOnboarding);
+      if (ob.targetRole) trajectory = ob.targetRole;
+      if (ob.commitment) commitment = ob.commitment;
+      if (ob.experienceLevel) experience = ob.experienceLevel;
+
+      if (ob.trajectory === 'tech') {
+        customMilestones = [
+          {
+            id: 'm1',
+            title: 'Rust Concurrency & Arc/Mutex Internals',
+            subtitle: 'Completed Yesterday • Score: 98%',
+            completed: true,
+          },
+          {
+            id: 'm2',
+            title: 'Zero-Copy Sockets & io_uring Lab',
+            subtitle: 'Today • 23:59 UTC',
+            badge: 'High Pri',
+            badgeColor: 'bg-error-container/60 text-error',
+            completed: false,
+          },
+          {
+            id: 'm3',
+            title: 'Tokio Multi-Threaded Task Scheduling',
+            subtitle: 'Due Thursday, Apr 17 • Peer Review',
+            completed: false,
+          },
+          {
+            id: 'm4',
+            title: 'Lock-Free Queues Benchmark Capstone',
+            subtitle: 'Due Apr 25 • Benchmark Evaluation',
+            completed: false,
+          },
+        ];
+      } else if (ob.trajectory === 'research') {
+        customMilestones = [
+          {
+            id: 'm1',
+            title: 'Paxos vs. Raft Comparative Proof Analysis',
+            subtitle: 'Completed Yesterday • Score: 98%',
+            completed: true,
+          },
+          {
+            id: 'm2',
+            title: 'TLA+ Model Checking & Safety Invariants',
+            subtitle: 'Today • 23:59 UTC',
+            badge: 'High Pri',
+            badgeColor: 'bg-error-container/60 text-error',
+            completed: false,
+          },
+          {
+            id: 'm3',
+            title: 'Byzantine Fault Tolerance & FLP Impossibility',
+            subtitle: 'Due Thursday, Apr 17 • Cohort Peer Review',
+            completed: false,
+          },
+          {
+            id: 'm4',
+            title: 'Asymmetric Network Quorum Capstone Paper',
+            subtitle: 'Due Apr 25 • Formal Review',
+            completed: false,
+          },
+        ];
+      }
+    }
+  } catch {
+    // Keep defaults
+  }
+
+  return { name, trajectory, commitment, experience, customMilestones };
+}
+
 export function Dashboard() {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState('Alex Rivera');
-  const [userTrajectory, setUserTrajectory] = useState('Distributed Systems');
+  const initData = useMemo(() => getInitialDashboardData(), []);
 
-  const [milestones, setMilestones] = useState<Milestone[]>([
-    {
-      id: 'm1',
-      title: 'MapReduce Practical Implementation',
-      subtitle: 'Completed Yesterday • Score: 98%',
-      completed: true,
-    },
-    {
-      id: 'm2',
-      title: 'Raft Consensus Algorithm Lab',
-      subtitle: 'Today • 23:59 UTC',
-      badge: 'High Pri',
-      badgeColor: 'bg-error-container/60 text-error',
-      completed: false,
-    },
-    {
-      id: 'm3',
-      title: 'Byzantine Fault Tolerance Paper Review',
-      subtitle: 'Due Thursday, Apr 17 • Cohort Peer Review',
-      completed: false,
-    },
-    {
-      id: 'm4',
-      title: 'Distributed Storage Final Capstone',
-      subtitle: 'Due Apr 25 • Benchmark Evaluation',
-      completed: false,
-    },
-  ]);
+  const [userName] = useState(() => initData.name);
+  const [userTrajectory] = useState(() => initData.trajectory);
+  const [commitment] = useState<'casual' | 'accelerated' | 'intensive'>(() => initData.commitment);
+  const [experienceLevel] = useState(() => initData.experience);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('learnmate_user');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.name) setUserName(parsed.name);
-        if (parsed.trajectory) setUserTrajectory(parsed.trajectory);
-      }
-    } catch (e) {
-      // Keep defaults
-    }
-  }, []);
+  const [milestones, setMilestones] = useState<Milestone[]>(() => {
+    if (initData.customMilestones) return initData.customMilestones;
+    return [
+      {
+        id: 'm1',
+        title: 'MapReduce Practical Implementation',
+        subtitle: 'Completed Yesterday • Score: 98%',
+        completed: true,
+      },
+      {
+        id: 'm2',
+        title: 'Raft Consensus Algorithm Lab',
+        subtitle: 'Today • 23:59 UTC',
+        badge: 'High Pri',
+        badgeColor: 'bg-error-container/60 text-error',
+        completed: false,
+      },
+      {
+        id: 'm3',
+        title: 'Byzantine Fault Tolerance Paper Review',
+        subtitle: 'Due Thursday, Apr 17 • Cohort Peer Review',
+        completed: false,
+      },
+      {
+        id: 'm4',
+        title: 'Distributed Storage Final Capstone',
+        subtitle: 'Due Apr 25 • Benchmark Evaluation',
+        completed: false,
+      },
+    ];
+  });
 
   const toggleMilestone = (id: string) => {
     setMilestones((prev) =>
@@ -207,7 +292,7 @@ export function Dashboard() {
             </span>
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <span className="font-mono text-xs text-on-surface-variant">Tier 3 • Core Engine</span>
+            <span className="font-mono text-xs text-on-surface-variant">Tier 3 • {experienceLevel}</span>
             <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface font-sans text-xs font-semibold">
               Lvl 4
             </span>
@@ -580,10 +665,12 @@ export function Dashboard() {
           <div className="rounded-2xl bg-white p-5 shadow-sm space-y-3 border border-surface-container">
             <div className="flex items-center justify-between">
               <h3 className="font-headline font-bold text-sm text-on-surface">Weekly Rhythm</h3>
-              <span className="font-mono text-xs text-outline">Target: 2.5h/day</span>
+              <span className="font-mono text-xs text-primary font-semibold">
+                Target: {commitment === 'casual' ? '0.6h/day' : commitment === 'accelerated' ? '1.2h/day' : '2.2h/day'}
+              </span>
             </div>
             <p className="font-sans text-xs text-on-surface-variant">
-              Total 16.4 hrs logged this week across 7 active study sessions.
+              Total {commitment === 'casual' ? '4.8' : commitment === 'accelerated' ? '9.6' : '16.4'} hrs logged this week across active study sessions ({commitment.toUpperCase()} PACING).
             </p>
             <div className="grid grid-cols-7 gap-1.5 pt-1">
               {[

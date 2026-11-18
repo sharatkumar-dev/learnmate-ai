@@ -55,7 +55,7 @@ export function Companion() {
           mode: (res as any).model_used || 'Granite 3.1 8B Instruct',
         },
       ]);
-    } catch (err) {
+    } catch {
       // Intelligent fallback
       setTimeout(() => {
         setDynamicMessages((prev) => [
