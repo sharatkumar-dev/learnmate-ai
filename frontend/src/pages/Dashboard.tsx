@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLearnMate } from '@/context/LearnMateContext';
 import {
@@ -7,7 +7,11 @@ import {
   recordActivity,
   getStoredMilestones,
   saveStoredMilestones,
+  getTimeBasedGreeting,
+  getDayAbbrInTimezone,
   type DashboardMilestone,
+  type StreakData,
+  type WeeklyActivityData,
 } from '@/utils/dashboardStore';
 
 interface SimulationState {
@@ -52,9 +56,35 @@ export function Dashboard() {
   const experienceLevel =
     storedOnboarding?.experienceLevel || storedUser?.experienceLevel || 'Senior (5+ yrs)';
 
-  // Streak & Weekly Activity from store
+  // Time-based dynamic greeting (IST / Localized)
+  const greeting = useMemo(() => getTimeBasedGreeting(), []);
+  const todayAbbr = useMemo(() => getDayAbbrInTimezone(), []);
+
+  // Streak & Weekly Activity from store with real-time sync
   const [streak, setStreak] = useState(() => getStreakData());
   const [weekly, setWeekly] = useState(() => getWeeklyActivity(commitment));
+
+  // Sync state if activity is recorded anywhere in the app
+  useEffect(() => {
+    const handleActivity = (e: Event) => {
+      const custom = e as CustomEvent<WeeklyActivityData>;
+      if (custom && custom.detail) {
+        setWeekly(custom.detail);
+      }
+    };
+    const handleStreak = (e: Event) => {
+      const custom = e as CustomEvent<StreakData>;
+      if (custom && custom.detail) {
+        setStreak(custom.detail);
+      }
+    };
+    window.addEventListener('learnmate_activity_updated', handleActivity);
+    window.addEventListener('learnmate_streak_updated', handleStreak);
+    return () => {
+      window.removeEventListener('learnmate_activity_updated', handleActivity);
+      window.removeEventListener('learnmate_streak_updated', handleStreak);
+    };
+  }, []);
 
   // Milestones with persistence
   const [milestones, setMilestones] = useState<DashboardMilestone[]>(() =>
@@ -97,7 +127,7 @@ export function Dashboard() {
       if (m.id === id) {
         const nextCompleted = !m.completed;
         if (nextCompleted) {
-          // Log study activity upon milestone completion
+          // Log study activity upon milestone completion (triggers real-time global event)
           const { streak: newStreak, weekly: newWeekly } = recordActivity(0.5);
           setStreak(newStreak);
           setWeekly(newWeekly);
@@ -213,12 +243,14 @@ export function Dashboard() {
       {/* Editorial Greeting & Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-surface-container">
         <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-primary-fixed/25 blur-3xl pointer-events-none" />
+
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
+            {/* Context & Cohort Status */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed text-primary text-xs font-semibold tracking-wide">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-mono text-xs font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                ACTIVE COHORT • SPRING 2025
+                ACTIVE COHORT • SPRING 2026
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs">
                 <span>🔥</span>
@@ -228,9 +260,20 @@ export function Dashboard() {
                 <span className="text-outline">•</span>
                 <span>Top 5% consistency</span>
               </span>
+              <span
+                id="dashboardTimezonePill"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs"
+                title="Timezone: Indian Standard Time (IST UTC+5:30)"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>IST (UTC+5:30)</span>
+              </span>
             </div>
-            <h1 className="font-headline text-3xl font-bold text-on-surface tracking-tight pt-1">
-              Good morning, {userName.split(' ')[0]}. Ready to master{' '}
+            <h1
+              id="dashboardGreetingHeader"
+              className="font-headline text-3xl font-bold text-on-surface tracking-tight pt-1"
+            >
+              {greeting}, {userName.split(' ')[0]}. Ready to master{' '}
               <span className="text-primary">{userTrajectory}</span> today?
             </h1>
             <p className="font-sans text-sm text-on-surface-variant">
@@ -304,6 +347,7 @@ export function Dashboard() {
             </div>
             <button
               type="button"
+              id="dashboardQuickLogBtn"
               onClick={handleQuickLog}
               className="font-code-sm text-[11px] text-primary hover:underline cursor-pointer font-medium"
             >
@@ -824,7 +868,7 @@ export function Dashboard() {
             </button>
           </div>
 
-          {/* Weekly Learning Rhythm (7-Day Heat Blocks) */}
+          {/* Weekly Learning Rhythm (7-Day Heat Blocks with Today Highlight) */}
           <div className="rounded-2xl bg-white p-5 shadow-sm space-y-3 border border-surface-container">
             <div className="flex items-center justify-between">
               <h3 className="font-headline font-bold text-sm text-on-surface">Weekly Rhythm</h3>
@@ -846,6 +890,7 @@ export function Dashboard() {
                 { day: 'Su', key: 'Su' },
               ].map((item) => {
                 const hours = weekly.dailyHours[item.key] || 0;
+                const isToday = item.key === todayAbbr;
                 const bg =
                   hours >= 2.5
                     ? 'bg-primary text-white font-bold'
@@ -860,12 +905,21 @@ export function Dashboard() {
                 return (
                   <div key={item.key} className="flex flex-col items-center gap-1.5">
                     <div
-                      className={`w-full h-8 rounded flex items-center justify-center font-mono text-[10px] transition-transform hover:scale-105 cursor-pointer ${bg}`}
-                      title={`${item.day}: ${hours}h logged`}
+                      className={`w-full h-8 rounded flex items-center justify-center font-mono text-[10px] transition-transform hover:scale-105 cursor-pointer ${bg} ${
+                        isToday ? 'ring-2 ring-primary ring-offset-1 font-bold shadow-xs' : ''
+                      }`}
+                      title={`${item.day}${isToday ? ' (Today - IST)' : ''}: ${hours}h logged`}
                     >
                       {hours > 0 ? `${hours}h` : '-'}
                     </div>
-                    <span className="font-sans text-xs text-outline font-medium">{item.day}</span>
+                    <span
+                      className={`font-sans text-xs font-medium flex items-center gap-0.5 ${
+                        isToday ? 'text-primary font-bold' : 'text-outline'
+                      }`}
+                    >
+                      {item.day}
+                      {isToday && <span className="w-1 h-1 rounded-full bg-primary" />}
+                    </span>
                   </div>
                 );
               })}

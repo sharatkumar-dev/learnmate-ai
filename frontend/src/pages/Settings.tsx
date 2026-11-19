@@ -1,4 +1,9 @@
+import { useState } from 'react';
+import { getUserTimezone, setUserTimezone } from '@/utils/dashboardStore';
+
 export function Settings() {
+  const [tz, setTz] = useState(() => getUserTimezone());
+
   return (
     <>
       <div className="flex flex-col w-full pb-16">
@@ -113,12 +118,20 @@ export function Settings() {
 <label className="font-label-md text-label-md text-on-surface font-medium">Timezone &amp; Spaced Cadence Sync</label>
 <div className="relative">
 <span className="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">schedule</span>
-<select className="w-full pl-10 pr-space-md py-2.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary appearance-none cursor-pointer shadow-inner">
-<option defaultValue="UTC-08:00">UTC-08:00 (Pacific Time - Los Angeles)</option>
-<option>UTC-05:00 (Eastern Time - New York)</option>
-<option>UTC+00:00 (Greenwich Mean Time - London)</option>
-<option>UTC+01:00 (Central European Time - Berlin)</option>
-<option>UTC+09:00 (Japan Standard Time - Tokyo)</option>
+<select
+  value={tz}
+  onChange={(e) => {
+    setTz(e.target.value);
+    setUserTimezone(e.target.value);
+  }}
+  className="w-full pl-10 pr-space-md py-2.5 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary appearance-none cursor-pointer shadow-inner"
+>
+  <option value="Asia/Kolkata">UTC+05:30 (Indian Standard Time - India / Kolkata)</option>
+  <option value="America/Los_Angeles">UTC-08:00 (Pacific Time - Los Angeles)</option>
+  <option value="America/New_York">UTC-05:00 (Eastern Time - New York)</option>
+  <option value="Europe/London">UTC+00:00 (Greenwich Mean Time - London)</option>
+  <option value="Europe/Berlin">UTC+01:00 (Central European Time - Berlin)</option>
+  <option value="Asia/Tokyo">UTC+09:00 (Japan Standard Time - Tokyo)</option>
 </select>
 <span className="material-symbols-outlined absolute right-3 top-2.5 text-[18px] text-outline pointer-events-none">unfold_more</span>
 </div>

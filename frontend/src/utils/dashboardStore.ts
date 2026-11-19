@@ -8,7 +8,7 @@ export interface StreakData {
 export interface WeeklyActivityData {
   weekStart: string; // YYYY-MM-DD (Monday)
   targetHours: number;
-  dailyHours: Record<string, number>; // { 'M': 1.8, 'T': 2.4, ... }
+  dailyHours: Record<string, number>; // { 'M': 1.2, 'T': 1.0, ... }
   totalHours: number;
 }
 
@@ -37,39 +37,163 @@ const WEEKLY_KEY = 'learnmate_weekly_activity';
 const NOTIFICATIONS_KEY = 'learnmate_notifications';
 const SIDEBAR_KEY = 'learnmate_sidebar_collapsed';
 const MILESTONES_KEY = 'learnmate_dashboard_milestones';
+const TIMEZONE_KEY = 'learnmate_timezone';
 
-// Helper to get local date string YYYY-MM-DD
+// ─────────────────────────────────────────────
+// Timezone & IST (UTC+5:30) Engine
+// ─────────────────────────────────────────────
+
+/**
+ * Resolves the active user timezone with first-class Indian Standard Time (IST) support.
+ */
+export function getUserTimezone(): string {
+  try {
+    const stored = localStorage.getItem(TIMEZONE_KEY);
+    if (stored) return stored;
+    const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return detected || 'Asia/Kolkata';
+  } catch {
+    return 'Asia/Kolkata';
+  }
+}
+
+export function setUserTimezone(tz: string): void {
+  try {
+    localStorage.setItem(TIMEZONE_KEY, tz);
+  } catch {
+    // Ignore
+  }
+}
+
+/**
+ * Returns current hour (0-23) in the target timezone.
+ */
+export function getHourInTimezone(date = new Date(), tz = getUserTimezone()): number {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: 'numeric',
+      hour12: false,
+    });
+    const parts = formatter.formatToParts(date);
+    const hourPart = parts.find((p) => p.type === 'hour');
+    return hourPart ? parseInt(hourPart.value, 10) : date.getHours();
+  } catch {
+    return date.getHours();
+  }
+}
+
+/**
+ * Returns time-appropriate greeting in the target timezone:
+ * - 05:00 - 11:59: "Good morning"
+ * - 12:00 - 16:59: "Good afternoon"
+ * - 17:00 - 04:59: "Good evening"
+ */
+export function getTimeBasedGreeting(tz = getUserTimezone()): string {
+  const hour = getHourInTimezone(new Date(), tz);
+  if (hour >= 5 && hour < 12) {
+    return 'Good morning';
+  } else if (hour >= 12 && hour < 17) {
+    return 'Good afternoon';
+  } else {
+    return 'Good evening';
+  }
+}
+
+/**
+ * Helper to get local date string YYYY-MM-DD in the target timezone.
+ */
+export function getTodayKeyInTimezone(tz = getUserTimezone()): string {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+    return formatter.format(new Date());
+  } catch {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+}
+
+/**
+ * Legacy alias for getTodayKeyInTimezone using default active timezone.
+ */
 export function getTodayKey(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return getTodayKeyInTimezone();
 }
 
-// Helper to get current day abbreviation ('M', 'T', 'W', 'Th', 'F', 'Sa', 'Su')
+/**
+ * Helper to get current day abbreviation ('M', 'T', 'W', 'Th', 'F', 'Sa', 'Su') in target timezone.
+ */
+export function getDayAbbrInTimezone(date = new Date(), tz = getUserTimezone()): string {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      weekday: 'short',
+    });
+    const weekday = formatter.format(date);
+    const map: Record<string, string> = {
+      Mon: 'M',
+      Tue: 'T',
+      Wed: 'W',
+      Thu: 'Th',
+      Fri: 'F',
+      Sat: 'Sa',
+      Sun: 'Su',
+    };
+    return map[weekday] || 'M';
+  } catch {
+    const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+    return days[date.getDay()];
+  }
+}
+
 export function getDayAbbr(date = new Date()): string {
-  const days = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-  return days[date.getDay()];
+  return getDayAbbrInTimezone(date);
 }
 
-// Helper to get Monday of the current week YYYY-MM-DD
-export function getMondayKey(d = new Date()): string {
-  const date = new Date(d);
-  const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-  const monday = new Date(date.setDate(diff));
-  const y = monday.getFullYear();
-  const m = String(monday.getMonth() + 1).padStart(2, '0');
-  const dayStr = String(monday.getDate()).padStart(2, '0');
-  return `${y}-${m}-${dayStr}`;
+/**
+ * Helper to get Monday of the current week YYYY-MM-DD in target timezone.
+ */
+export function getMondayKeyInTimezone(tz = getUserTimezone()): string {
+  try {
+    const todayStr = getTodayKeyInTimezone(tz);
+    const [year, month, day] = todayStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay(); // 0 is Sunday
+    const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    const monday = new Date(date.setDate(diff));
+    const y = monday.getFullYear();
+    const m = String(monday.getMonth() + 1).padStart(2, '0');
+    const d = String(monday.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  } catch {
+    const date = new Date();
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(date.setDate(diff));
+    const y = monday.getFullYear();
+    const m = String(monday.getMonth() + 1).padStart(2, '0');
+    const d = String(monday.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+}
+
+export function getMondayKey(): string {
+  return getMondayKeyInTimezone();
 }
 
 // ─────────────────────────────────────────────
 // Streak Management
 // ─────────────────────────────────────────────
 export function getStreakData(): StreakData {
-  const today = getTodayKey();
+  const today = getTodayKeyInTimezone();
   try {
     const raw = localStorage.getItem(STREAK_KEY);
     if (raw) {
@@ -86,7 +210,7 @@ export function getStreakData(): StreakData {
         // Active yesterday, streak intact
         return data;
       } else {
-        // Missed one or more days, streak resets to 0 (or 1 once active today)
+        // Missed one or more days, streak resets to 0 (best preserved)
         return {
           currentStreak: 0,
           bestStreak: Math.max(data.bestStreak || 0, data.currentStreak || 0),
@@ -115,7 +239,7 @@ export function getStreakData(): StreakData {
 }
 
 export function recordActivity(hoursLogged = 0.5): { streak: StreakData; weekly: WeeklyActivityData } {
-  const today = getTodayKey();
+  const today = getTodayKeyInTimezone();
   const currentStreakData = getStreakData();
 
   let newCurrentStreak = currentStreakData.currentStreak;
@@ -140,6 +264,13 @@ export function recordActivity(hoursLogged = 0.5): { streak: StreakData; weekly:
 
   // Also log to weekly hours
   const weekly = logWeeklyHours(hoursLogged);
+
+  // Dispatch global window events for real-time reactivity
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('learnmate_streak_updated', { detail: updatedStreak }));
+    window.dispatchEvent(new CustomEvent('learnmate_activity_updated', { detail: weekly }));
+  }
+
   return { streak: updatedStreak, weekly };
 }
 
@@ -148,7 +279,7 @@ export function recordActivity(hoursLogged = 0.5): { streak: StreakData; weekly:
 // ─────────────────────────────────────────────
 export function getWeeklyActivity(commitment: 'casual' | 'accelerated' | 'intensive' = 'accelerated'): WeeklyActivityData {
   const targetHours = commitment === 'casual' ? 4 : commitment === 'accelerated' ? 8 : 15;
-  const currentMonday = getMondayKey();
+  const currentMonday = getMondayKeyInTimezone();
 
   try {
     const raw = localStorage.getItem(WEEKLY_KEY);
@@ -165,13 +296,14 @@ export function getWeeklyActivity(commitment: 'casual' | 'accelerated' | 'intens
     // Ignore
   }
 
-  // Base starter activity for the week matching cohort pacing
+  // Realistic partial progress starter matching cohort pacing (e.g. ~40% progress)
+  // Ensures sidebar weekly goal does NOT falsely show 100% on start
   const baseDaily: Record<string, number> =
     commitment === 'casual'
-      ? { M: 0.8, T: 1.0, W: 1.2, Th: 0.6, F: 0.8, Sa: 0.4, Su: 0 }
+      ? { M: 0.8, T: 0.6, W: 0.4, Th: 0, F: 0, Sa: 0, Su: 0 } // 1.8h / 4h = 45%
       : commitment === 'accelerated'
-      ? { M: 1.8, T: 2.4, W: 2.1, Th: 1.5, F: 1.8, Sa: 0, Su: 0 }
-      : { M: 2.5, T: 3.2, W: 3.5, Th: 2.8, F: 2.4, Sa: 1.2, Su: 0 };
+      ? { M: 1.2, T: 1.0, W: 1.0, Th: 0, F: 0, Sa: 0, Su: 0 } // 3.2h / 8h = 40%
+      : { M: 2.2, T: 2.0, W: 1.8, Th: 0, F: 0, Sa: 0, Su: 0 }; // 6.0h / 15h = 40%
 
   const total = Object.values(baseDaily).reduce((a, b) => a + b, 0);
   const newWeekly: WeeklyActivityData = {
@@ -192,7 +324,7 @@ export function getWeeklyActivity(commitment: 'casual' | 'accelerated' | 'intens
 
 export function logWeeklyHours(hours: number): WeeklyActivityData {
   const current = getWeeklyActivity();
-  const dayKey = getDayAbbr();
+  const dayKey = getDayAbbrInTimezone();
   const existingDayHours = current.dailyHours[dayKey] || 0;
   current.dailyHours[dayKey] = Math.round((existingDayHours + hours) * 10) / 10;
 
@@ -204,6 +336,11 @@ export function logWeeklyHours(hours: number): WeeklyActivityData {
   } catch {
     // Ignore
   }
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('learnmate_activity_updated', { detail: current }));
+  }
+
   return current;
 }
 
@@ -230,8 +367,8 @@ export function getNotifications(): DashboardNotification[] {
     },
     {
       id: 'notif-2',
-      title: 'Weekly Study Target: 85% Reached',
-      description: 'You are only 1.2 hours away from hitting your weekly dedicated commitment goal!',
+      title: 'Weekly Study Target: 40% Reached',
+      description: 'You have logged 3.2 hours toward your weekly 8.0-hour goal. Keep up the momentum!',
       time: '1h ago',
       read: false,
       type: 'goal',
@@ -314,7 +451,7 @@ export function setSidebarCollapsed(collapsed: boolean): void {
 }
 
 // ─────────────────────────────────────────────
-// Dashboard Milestones Persistence
+// Dashboard Milestones Persistence (Timezone & IST aware)
 // ─────────────────────────────────────────────
 export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMilestone[] {
   try {
@@ -336,7 +473,7 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm2',
         title: 'Zero-Copy Sockets & io_uring Lab',
-        subtitle: 'Today • 23:59 UTC',
+        subtitle: 'Today • 11:59 PM IST',
         badge: 'High Pri',
         badgeColor: 'bg-error-container/60 text-error',
         completed: false,
@@ -344,13 +481,13 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm3',
         title: 'Tokio Multi-Threaded Task Scheduling',
-        subtitle: 'Due Thursday, Apr 17 • Peer Review',
+        subtitle: 'Tomorrow • 06:00 PM IST • Peer Review',
         completed: false,
       },
       {
         id: 'm4',
         title: 'Lock-Free Queues Benchmark Capstone',
-        subtitle: 'Due Apr 25 • Benchmark Evaluation',
+        subtitle: 'Next Week • 08:00 PM IST • Benchmark Evaluation',
         completed: false,
       },
     ];
@@ -365,7 +502,7 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm2',
         title: 'TLA+ Model Checking & Safety Invariants',
-        subtitle: 'Today • 23:59 UTC',
+        subtitle: 'Today • 11:59 PM IST',
         badge: 'High Pri',
         badgeColor: 'bg-error-container/60 text-error',
         completed: false,
@@ -373,13 +510,13 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm3',
         title: 'Byzantine Fault Tolerance & FLP Impossibility',
-        subtitle: 'Due Thursday, Apr 17 • Cohort Peer Review',
+        subtitle: 'Tomorrow • 06:00 PM IST • Cohort Peer Review',
         completed: false,
       },
       {
         id: 'm4',
         title: 'Asymmetric Network Quorum Capstone Paper',
-        subtitle: 'Due Apr 25 • Formal Review',
+        subtitle: 'Next Week • 08:00 PM IST • Formal Review',
         completed: false,
       },
     ];
@@ -394,7 +531,7 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm2',
         title: 'Raft Consensus Algorithm Lab',
-        subtitle: 'Today • 23:59 UTC',
+        subtitle: 'Today • 11:59 PM IST',
         badge: 'High Pri',
         badgeColor: 'bg-error-container/60 text-error',
         completed: false,
@@ -402,13 +539,13 @@ export function getStoredMilestones(defaultTrajectory = 'career'): DashboardMile
       {
         id: 'm3',
         title: 'Byzantine Fault Tolerance Paper Review',
-        subtitle: 'Due Thursday, Apr 17 • Cohort Peer Review',
+        subtitle: 'Tomorrow • 06:00 PM IST • Cohort Peer Review',
         completed: false,
       },
       {
         id: 'm4',
         title: 'Distributed Storage Final Capstone',
-        subtitle: 'Due Apr 25 • Benchmark Evaluation',
+        subtitle: 'Next Week • 08:00 PM IST • Benchmark Evaluation',
         completed: false,
       },
     ];

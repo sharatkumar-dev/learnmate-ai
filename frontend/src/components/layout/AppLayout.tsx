@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useLearnMate } from '@/context/LearnMateContext';
 import { MockBanner } from '@/components/MockBanner';
 import { CommandPalette } from '@/components/CommandPalette';
 import {
-  getStreakData,
   getWeeklyActivity,
   getNotifications,
   markNotificationAsRead,
@@ -49,13 +48,23 @@ export function AppLayout() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  // Dynamic metrics from dashboardStore
-  const streak = useMemo(() => getStreakData(), []);
+  // Dynamic commitment and real-time synchronized weekly activity
   const commitment = (profile?.time_available_hours_per_week === 4 ? 'casual' : profile?.time_available_hours_per_week === 15 ? 'intensive' : 'accelerated') as 'casual' | 'accelerated' | 'intensive';
-  const weekly = useMemo(() => getWeeklyActivity(commitment), [commitment]);
+  const [activityUpdateCount, setActivityUpdateCount] = useState(0);
+  const weekly = getWeeklyActivity(commitment);
   const [notifications, setNotifications] = useState<DashboardNotification[]>(() => getNotifications());
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    const handleActivity = () => {
+      setActivityUpdateCount((c) => c + 1);
+    };
+    window.addEventListener('learnmate_activity_updated', handleActivity);
+    return () => {
+      window.removeEventListener('learnmate_activity_updated', handleActivity);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsCollapsed((prev) => {
@@ -106,13 +115,16 @@ export function AppLayout() {
         .slice(0, 2)
     : 'LM';
 
-  const weeklyPct = Math.min(100, Math.round((weekly.totalHours / weekly.targetHours) * 100));
+  // Weekly Goal calculations: raw percentage can exceed 100%, visual bar clamped at 100%
+  const rawWeeklyPct =
+    weekly.targetHours > 0 ? Math.round((weekly.totalHours / weekly.targetHours) * 100) : 0;
+  const visualWeeklyPct = Math.min(100, Math.max(0, rawWeeklyPct));
 
   const filteredNotifications =
     notificationFilter === 'unread' ? notifications.filter((n) => !n.read) : notifications;
 
   return (
-    <div className="min-h-screen flex bg-surface font-body text-on-surface antialiased">
+    <div className="min-h-screen flex bg-surface font-body text-on-surface antialiased" data-sync={activityUpdateCount}>
       {/* ⌘K Command Palette Modal */}
       <CommandPalette open={cmdOpen} onOpenChange={setCmdOpen} />
 
@@ -128,74 +140,59 @@ export function AppLayout() {
           <div className="h-16 px-3 flex items-center justify-between border-b border-outline/10">
             <NavLink
               to="/dashboard"
-              className={`flex items-center gap-2.5 group overflow-hidden ${
-                isCollapsed ? 'justify-center w-full' : ''
+              className={`flex items-center transition-all ${
+                isCollapsed ? 'justify-center w-full' : 'gap-2.5'
               }`}
-              title="LearnMate Dashboard"
             >
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shadow-sm shrink-0 transition-transform group-hover:scale-105">
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                  <path d="M12 3v4" strokeWidth="1.5" />
-                </svg>
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold shadow-xs shrink-0">
+                LM
               </div>
               {!isCollapsed && (
-                <span className="font-headline text-lg font-bold text-on-surface tracking-tight truncate">
-                  LearnMate
-                </span>
+                <div className="min-w-0">
+                  <span className="font-headline font-bold text-base text-on-surface tracking-tight block truncate">
+                    LearnMate
+                  </span>
+                  <span className="font-code text-[10px] text-outline block leading-none">
+                    Adaptive AI
+                  </span>
+                </div>
               )}
             </NavLink>
 
-            {/* Collapse / Expand Toggle Button */}
+            {/* Sidebar Collapse Toggle Button */}
             {!isCollapsed && (
               <button
                 type="button"
+                id="sidebarCollapseBtn"
                 onClick={toggleSidebar}
-                className="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
                 title="Collapse sidebar"
                 aria-label="Collapse sidebar"
               >
-                <span className="material-symbols-outlined text-[20px]">first_page</span>
+                <span className="material-symbols-outlined text-[18px]">left_panel_close</span>
               </button>
             )}
           </div>
 
-          {/* Collapsed re-expand trigger */}
+          {/* Quick Expand Button when collapsed */}
           {isCollapsed && (
-            <div className="pt-2 px-3 flex justify-center">
+            <div className="p-2 flex justify-center border-b border-outline/10">
               <button
                 type="button"
+                id="sidebarExpandBtn"
                 onClick={toggleSidebar}
-                className="p-1.5 rounded-lg text-outline hover:text-primary hover:bg-surface-container-low transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
                 title="Expand sidebar"
                 aria-label="Expand sidebar"
               >
-                <span className="material-symbols-outlined text-[20px]">last_page</span>
+                <span className="material-symbols-outlined text-[18px]">left_panel_open</span>
               </button>
             </div>
           )}
 
-          {/* Section Header */}
-          {!isCollapsed && (
-            <div className="px-4 pt-4 pb-2">
-              <span className="text-[11px] font-headline uppercase tracking-wider text-outline font-semibold">
-                Workspace
-              </span>
-            </div>
-          )}
-
-          {/* Navigation Links */}
+          {/* Main Navigation Items */}
           <nav
-            className={`flex-1 space-y-1 overflow-y-auto mt-2 ${
+            className={`flex-1 py-4 space-y-1 overflow-y-auto ${
               isCollapsed ? 'px-2' : 'px-3'
             }`}
             aria-label="Main Navigation"
@@ -249,12 +246,21 @@ export function AppLayout() {
             <div className="p-2.5 rounded-lg bg-surface-container-low border border-outline/15">
               <div className="flex items-center justify-between mb-1.5 text-xs">
                 <span className="text-on-surface-variant font-medium">Weekly Goal</span>
-                <span className="text-primary font-bold">{weeklyPct}%</span>
+                <span
+                  id="sidebarWeeklyPctText"
+                  className={`font-bold ${
+                    rawWeeklyPct > 100 ? 'text-emerald-600' : 'text-primary'
+                  }`}
+                >
+                  {rawWeeklyPct}%{rawWeeklyPct > 100 ? ' 🎯' : ''}
+                </span>
               </div>
               <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary rounded-full transition-all duration-500"
-                  style={{ width: `${weeklyPct}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    rawWeeklyPct > 100 ? 'bg-emerald-500' : 'bg-primary'
+                  }`}
+                  style={{ width: `${visualWeeklyPct}%` }}
                 />
               </div>
               <p className="text-[10px] font-mono text-outline mt-1 text-right">
@@ -264,9 +270,16 @@ export function AppLayout() {
           ) : (
             <div
               className="flex justify-center p-1.5 rounded-lg bg-surface-container-low border border-outline/15"
-              title={`Weekly Goal: ${weeklyPct}% (${weekly.totalHours}h / ${weekly.targetHours}h)`}
+              title={`Weekly Goal: ${rawWeeklyPct}% (${weekly.totalHours}h / ${weekly.targetHours}h)`}
             >
-              <span className="text-[10px] font-bold text-primary">{weeklyPct}%</span>
+              <span
+                id="sidebarWeeklyPctTextCollapsed"
+                className={`text-[10px] font-bold ${
+                  rawWeeklyPct > 100 ? 'text-emerald-600' : 'text-primary'
+                }`}
+              >
+                {rawWeeklyPct}%
+              </span>
             </div>
           )}
 
@@ -419,23 +432,23 @@ export function AppLayout() {
           isCollapsed ? 'md:pl-[72px]' : 'md:pl-[260px]'
         }`}
       >
-        {/* Top Header Bar (Sticky) */}
-        <header className="sticky top-0 z-30 h-16 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline/15 flex items-center justify-between px-4 md:px-8">
-          {/* Left: Mobile hamburger or Quick Find */}
+        {/* Top Header Navbar */}
+        <header className="h-16 border-b border-outline/15 bg-surface-container-lowest/80 backdrop-blur-md sticky top-0 z-30 px-4 md:px-8 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="md:hidden p-2 rounded-lg text-on-surface-variant hover:bg-surface-container cursor-pointer"
-              aria-label="Open mobile menu"
+              className="p-2 -ml-2 rounded-lg text-outline hover:text-on-surface md:hidden cursor-pointer"
+              aria-label="Open navigation menu"
             >
-              <span className="material-symbols-outlined text-[22px]">menu</span>
+              <span className="material-symbols-outlined text-[24px]">menu</span>
             </button>
 
+            {/* Quick Find Palette Trigger */}
             <button
               type="button"
               onClick={() => setCmdOpen(true)}
-              className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline/20 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all group cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline/15 text-outline hover:text-on-surface hover:border-outline/30 transition-all cursor-pointer group"
             >
               <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">
                 search
@@ -447,17 +460,16 @@ export function AppLayout() {
             </button>
           </div>
 
-          {/* Right: Streak indicator + Notification + Profile */}
+          {/* Right: Timezone Indicator + Notification + Profile */}
           <div className="flex items-center gap-3 md:gap-4">
-            {/* Dynamic Learning Streak Indicator Pill */}
+            {/* Timezone Indicator Badge (Replaced redundant header streak indicator) */}
             <div
-              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-700 cursor-default"
-              title={`Current streak: ${streak.currentStreak} days • Best: ${streak.bestStreak} days`}
+              id="headerTimezoneBadge"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs border border-outline/10 cursor-default"
+              title="Timezone: Indian Standard Time (IST UTC+5:30)"
             >
-              <span className="text-[14px]">🔥</span>
-              <span className="font-label text-xs font-bold">
-                {streak.currentStreak} {streak.currentStreak === 1 ? 'day' : 'days'}
-              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>IST • UTC+5:30</span>
             </div>
 
             {/* Notification Flyout Center */}
