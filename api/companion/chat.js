@@ -1,7 +1,7 @@
 // Vercel Serverless Function: /api/companion/chat
 import https from 'https';
 
-function callGemini(url, payload, timeoutMs = 25000) {
+function callGemini(url, payload, timeoutMs = 45000) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify(payload);
     const parsedUrl = new URL(url);
@@ -124,21 +124,24 @@ export default async function handler(req, res) {
       },
     };
 
-    const candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-3.5-flash', 'gemini-2.5-flash-lite'];
+    const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
     let aiResponseText = '';
     let lastError = null;
 
     for (const model of candidateModels) {
       try {
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const result = await callGemini(geminiUrl, payload, 25000);
+        const result = await callGemini(geminiUrl, payload, 45000);
 
         if (result.status === 200) {
           const data = JSON.parse(result.body);
           const candidates = data.candidates || [];
           if (candidates.length > 0 && candidates[0].content?.parts?.length > 0) {
-            aiResponseText = candidates[0].content.parts[0].text || '';
-            break;
+            aiResponseText = candidates[0].content.parts
+              .map((p) => p.text || '')
+              .filter(Boolean)
+              .join('\n');
+            if (aiResponseText) break;
           }
         } else {
           lastError = `${result.status}: ${result.body.slice(0, 200)}`;
