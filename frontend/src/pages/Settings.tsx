@@ -1214,7 +1214,11 @@ export function Settings() {
                         return (
                           <div
                             key={th.id}
-                            onClick={() => updateAppearance({ theme: th.id })}
+                            id={`theme-card-${th.id}`}
+                            onClick={() => {
+                              updateAppearance({ theme: th.id });
+                              showToast(`Interface theme switched to ${th.label}`);
+                            }}
                             className={`p-space-md rounded-xl cursor-pointer transition-all border flex flex-col justify-between ${
                               active
                                 ? 'bg-primary-fixed/30 border-primary ring-2 ring-primary/30'
@@ -1806,12 +1810,14 @@ export function Settings() {
               </div>
               <button
                 type="button"
+                id="closeAvatarModalBtn"
                 onClick={() => {
                   setShowAvatarModal(false);
                   setSelectedFilePreview(null);
                   setUploadError(null);
                 }}
-                className="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors"
+                className="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors cursor-pointer"
+                aria-label="Close"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
