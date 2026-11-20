@@ -89,6 +89,7 @@ langflow/.langflow/
 *.log
 *.tmp
 *.bak
+scratch/
 learnmate-ai-plan.md
 
 # ---- Local Submissions & Testimonials (Do not push to GitHub) ---------------
