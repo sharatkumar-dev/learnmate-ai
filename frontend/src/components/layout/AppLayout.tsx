@@ -4,7 +4,6 @@ import { useLearnMate } from '@/context/LearnMateContext';
 import { MockBanner } from '@/components/MockBanner';
 import { CommandPalette } from '@/components/CommandPalette';
 import {
-  getWeeklyActivity,
   getNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
@@ -48,10 +47,8 @@ export function AppLayout() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  // Dynamic commitment and real-time synchronized weekly activity
-  const commitment = (profile?.time_available_hours_per_week === 4 ? 'casual' : profile?.time_available_hours_per_week === 15 ? 'intensive' : 'accelerated') as 'casual' | 'accelerated' | 'intensive';
+  // Dynamic real-time synchronized activity counter
   const [activityUpdateCount, setActivityUpdateCount] = useState(0);
-  const weekly = getWeeklyActivity(commitment);
   const [notifications, setNotifications] = useState<DashboardNotification[]>(() => getNotifications());
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -106,6 +103,7 @@ export function AppLayout() {
   const userName = user?.fullName || (profile?.target_role ? `Learner (${profile.target_role})` : 'Learner');
   const userEmail = user?.email || 'learner@learnmate.ai';
   const userTrajectory = user?.trajectory || profile?.target_role || 'Distributed Systems';
+  const userAvatar = user?.avatar;
   const userInitials = user?.fullName
     ? user.fullName
         .split(' ')
@@ -114,11 +112,6 @@ export function AppLayout() {
         .toUpperCase()
         .slice(0, 2)
     : 'LM';
-
-  // Weekly Goal calculations: raw percentage can exceed 100%, visual bar clamped at 100%
-  const rawWeeklyPct =
-    weekly.targetHours > 0 ? Math.round((weekly.totalHours / weekly.targetHours) * 100) : 0;
-  const visualWeeklyPct = Math.min(100, Math.max(0, rawWeeklyPct));
 
   const filteredNotifications =
     notificationFilter === 'unread' ? notifications.filter((n) => !n.read) : notifications;
@@ -241,48 +234,6 @@ export function AppLayout() {
             isCollapsed ? 'p-2 space-y-2' : 'p-3 space-y-3'
           }`}
         >
-          {/* Dynamic Weekly Goal Progress Pill */}
-          {!isCollapsed ? (
-            <div className="p-2.5 rounded-lg bg-surface-container-low border border-outline/15">
-              <div className="flex items-center justify-between mb-1.5 text-xs">
-                <span className="text-on-surface-variant font-medium">Weekly Goal</span>
-                <span
-                  id="sidebarWeeklyPctText"
-                  className={`font-bold ${
-                    rawWeeklyPct > 100 ? 'text-emerald-600' : 'text-primary'
-                  }`}
-                >
-                  {rawWeeklyPct}%{rawWeeklyPct > 100 ? ' 🎯' : ''}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    rawWeeklyPct > 100 ? 'bg-emerald-500' : 'bg-primary'
-                  }`}
-                  style={{ width: `${visualWeeklyPct}%` }}
-                />
-              </div>
-              <p className="text-[10px] font-mono text-outline mt-1 text-right">
-                {weekly.totalHours}h / {weekly.targetHours}h logged
-              </p>
-            </div>
-          ) : (
-            <div
-              className="flex justify-center p-1.5 rounded-lg bg-surface-container-low border border-outline/15"
-              title={`Weekly Goal: ${rawWeeklyPct}% (${weekly.totalHours}h / ${weekly.targetHours}h)`}
-            >
-              <span
-                id="sidebarWeeklyPctTextCollapsed"
-                className={`text-[10px] font-bold ${
-                  rawWeeklyPct > 100 ? 'text-emerald-600' : 'text-primary'
-                }`}
-              >
-                {rawWeeklyPct}%
-              </span>
-            </div>
-          )}
-
           {/* User Profile Trigger & Flyout */}
           <div className="relative">
             <button
@@ -298,8 +249,19 @@ export function AppLayout() {
                   isCollapsed ? 'justify-center' : 'gap-2.5'
                 }`}
               >
-                <div className="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-code text-xs font-bold shrink-0">
-                  {userInitials}
+                <div className="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-code text-xs font-bold shrink-0 overflow-hidden">
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
                 {!isCollapsed && (
                   <div className="min-w-0">
@@ -321,12 +283,28 @@ export function AppLayout() {
 
             {userMenuOpen && (
               <div className="absolute bottom-full left-0 mb-2 w-64 bg-surface-container-lowest rounded-xl shadow-xl border border-outline/20 p-1.5 z-50">
-                <div className="px-2.5 py-2 border-b border-outline/10 mb-1">
-                  <p className="text-xs font-bold text-on-surface truncate">{userName}</p>
-                  <p className="text-[11px] text-outline truncate">{userEmail}</p>
-                  <span className="inline-block mt-1 px-1.5 py-0.5 rounded bg-primary-fixed text-primary font-mono text-[10px] font-semibold">
-                    {userTrajectory}
-                  </span>
+                <div className="px-2.5 py-2 border-b border-outline/10 mb-1 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-code text-xs font-bold shrink-0 overflow-hidden">
+                    {userAvatar ? (
+                      <img
+                        src={userAvatar}
+                        alt={userName}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      userInitials
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-on-surface truncate">{userName}</p>
+                    <p className="text-[11px] text-outline truncate">{userEmail}</p>
+                    <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-primary-fixed text-primary font-mono text-[9px] font-semibold">
+                      {userTrajectory}
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -460,18 +438,8 @@ export function AppLayout() {
             </button>
           </div>
 
-          {/* Right: Timezone Indicator + Notification + Profile */}
+          {/* Right: Notification + Profile */}
           <div className="flex items-center gap-3 md:gap-4">
-            {/* Timezone Indicator Badge (Replaced redundant header streak indicator) */}
-            <div
-              id="headerTimezoneBadge"
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs border border-outline/10 cursor-default"
-              title="Timezone: Indian Standard Time (IST UTC+5:30)"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>IST • UTC+5:30</span>
-            </div>
-
             {/* Notification Flyout Center */}
             <div className="relative" ref={notifRef}>
               <button
@@ -634,8 +602,19 @@ export function AppLayout() {
                 aria-label="User profile and settings menu"
                 title={userName}
               >
-                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-code text-xs font-bold shadow-xs">
-                  {userInitials}
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-code text-xs font-bold shadow-xs overflow-hidden">
+                  {userAvatar ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
               </button>
 
@@ -649,8 +628,19 @@ export function AppLayout() {
                   {/* User Profile Header */}
                   <div className="px-3.5 py-2.5 border-b border-outline/10">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-code text-xs font-bold shrink-0">
-                        {userInitials}
+                      <div className="w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-code text-xs font-bold shrink-0 overflow-hidden">
+                        {userAvatar ? (
+                          <img
+                            src={userAvatar}
+                            alt={userName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          userInitials
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-headline text-xs font-bold text-on-surface truncate">
@@ -685,24 +675,6 @@ export function AppLayout() {
                         <span>User Settings</span>
                       </div>
                       <span className="font-code text-[10px] text-outline">G S</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        setHeaderDropdownOpen(false);
-                        navigate('/onboarding');
-                      }}
-                      className="w-full flex items-center justify-between px-3.5 py-2 text-xs font-medium text-on-surface hover:bg-surface-container-low transition-colors group cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[18px] text-outline group-hover:text-primary transition-colors">
-                          tune
-                        </span>
-                        <span>Calibration Wizard</span>
-                      </div>
-                      <span className="font-code text-[10px] text-outline">G C</span>
                     </button>
 
                     <button

@@ -313,8 +313,6 @@ export function LearningPathway() {
             <span className="px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant text-[10px] font-bold">
               SYNCED
             </span>
-            <span className="text-outline">•</span>
-            <span className="text-emerald-700 font-medium">IST • UTC+5:30</span>
           </div>
 
           {/* Interactive Roadmap Switcher Dropdown */}

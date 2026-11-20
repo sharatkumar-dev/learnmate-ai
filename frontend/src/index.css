@@ -24,10 +24,29 @@
     --input: 220 13% 91%;
     --ring: 246 80% 59%;
     --radius: 0.75rem;
+
+    /* Responsive Stitch Semantic Tokens (Light Mode RGB Channels) */
+    --color-surface: 250 248 255;
+    --color-on-surface: 19 27 46;
+    --color-surface-container-lowest: 255 255 255;
+    --color-surface-container-low: 242 243 255;
+    --color-surface-container: 234 237 255;
+    --color-surface-container-high: 226 231 255;
+    --color-surface-container-highest: 218 226 253;
+    --color-on-surface-variant: 70 69 85;
+    --color-outline: 119 117 135;
+    --color-outline-variant: 199 196 216;
+    --color-primary-fixed: 226 223 255;
+    --color-primary-fixed-dim: 195 192 255;
+    --color-on-primary-fixed: 15 0 105;
+    --color-secondary-fixed: 225 224 255;
+    --color-surface-variant: 218 226 253;
+    --color-inverse-surface: 40 48 68;
+    --color-inverse-on-surface: 238 240 255;
   }
 
   .dark {
-    --background: 222 47% 11%;
+    --background: 222 47% 7%;
     --foreground: 210 40% 98%;
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
@@ -46,6 +65,25 @@
     --border: 217 33% 20%;
     --input: 217 33% 20%;
     --ring: 246 80% 65%;
+
+    /* Responsive Stitch Semantic Tokens (Dark Midnight Mode RGB Channels) */
+    --color-surface: 11 15 25;
+    --color-on-surface: 241 245 249;
+    --color-surface-container-lowest: 17 24 39;
+    --color-surface-container-low: 24 33 47;
+    --color-surface-container: 30 41 59;
+    --color-surface-container-high: 45 55 72;
+    --color-surface-container-highest: 64 74 89;
+    --color-on-surface-variant: 156 163 175;
+    --color-outline: 75 85 99;
+    --color-outline-variant: 55 65 81;
+    --color-primary-fixed: 49 46 129;
+    --color-primary-fixed-dim: 67 56 202;
+    --color-on-primary-fixed: 224 231 255;
+    --color-secondary-fixed: 55 48 163;
+    --color-surface-variant: 24 33 47;
+    --color-inverse-surface: 248 250 252;
+    --color-inverse-on-surface: 15 23 42;
   }
 }
 

@@ -600,6 +600,12 @@ export function applyTheme(theme: 'system' | 'dark' | 'light'): void {
   } else {
     root.classList.remove('dark');
   }
+
+  try {
+    window.dispatchEvent(new CustomEvent('learnmate_theme_changed', { detail: { theme, isDark } }));
+  } catch {
+    // Ignore event dispatch in non-browser envs
+  }
 }
 
 export function setThemePreference(theme: 'system' | 'dark' | 'light'): void {
@@ -612,11 +618,14 @@ export function setThemePreference(theme: 'system' | 'dark' | 'light'): void {
 }
 
 export function getDefaultSettings(
-  user?: { fullName?: string; email?: string; trajectory?: string } | null,
+  user?: { fullName?: string; email?: string; trajectory?: string; avatar?: string } | null,
 ): UserSettings {
   const name = user?.fullName || 'Alex Rivera';
   const email = user?.email || 'alex.rivera@distributed-core.io';
   const role = user?.trajectory || 'Staff Systems Engineer';
+  const avatar =
+    user?.avatar ||
+    'https://lh3.googleusercontent.com/aida-public/AB6AXuAXpXrboKZ3t3zyTfpdX2qdG5qJKRnB0Yr0ev8TDWomCidH9kNXTTvFrBR0L4L3XJEjDzIFkUZuy12j8RfG2NUuulFupU9kxglD4pQF5rb6oQGDGjvd_u3MIVxFzcROxqaOwWxuucO9g8smwJ6siyhE8j8Qof5xdYrM-YUdFflXM4mN02JmHbSl9K8Xet4L6K_nCFwFTvYydAYOrwwnRMtYZygDussufkJfzrum1axk';
 
   return {
     profile: {
@@ -624,8 +633,7 @@ export function getDefaultSettings(
       email: email,
       role: role,
       timezone: getUserTimezone(),
-      avatarUrl:
-        'https://lh3.googleusercontent.com/aida-public/AB6AXuAXpXrboKZ3t3zyTfpdX2qdG5qJKRnB0Yr0ev8TDWomCidH9kNXTTvFrBR0L4L3XJEjDzIFkUZuy12j8RfG2NUuulFupU9kxglD4pQF5rb6oQGDGjvd_u3MIVxFzcROxqaOwWxuucO9g8smwJ6siyhE8j8Qof5xdYrM-YUdFflXM4mN02JmHbSl9K8Xet4L6K_nCFwFTvYydAYOrwwnRMtYZygDussufkJfzrum1axk',
+      avatarUrl: avatar,
       publicId: '#ALX-8902',
       vcs: {
         github: { username: 'arivera-kernel', linked: true },

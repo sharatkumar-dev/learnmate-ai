@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLearnMate } from '@/context/LearnMateContext';
 import type { UserSettings } from '@/types/index';
@@ -51,6 +51,13 @@ export function Settings() {
   // VCS modal state
   const [vcsUsername, setVcsUsername] = useState('');
 
+  // Local Device Avatar Upload state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFilePreview, setSelectedFilePreview] = useState<string | null>(null);
+  const [selectedFileName, setSelectedFileName] = useState<string>('');
+  const [selectedFileSize, setSelectedFileSize] = useState<string>('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   // Preset avatars
   const PRESET_AVATARS = [
     {
@@ -81,6 +88,7 @@ export function Settings() {
           fullName: user.fullName || prev.profile.fullName,
           email: user.email || prev.profile.email,
           role: user.trajectory || prev.profile.role,
+          avatarUrl: user.avatar || prev.profile.avatarUrl,
         },
       }));
     }
@@ -98,7 +106,69 @@ export function Settings() {
   // Helper to update specific sub-objects in settings
   const updateProfile = (updates: Partial<UserSettings['profile']>) => {
     setSettings((prev) => ({ ...prev, profile: { ...prev.profile, ...updates } }));
+    if (updates.avatarUrl !== undefined) {
+      updateUserProfile({ avatar: updates.avatarUrl });
+    }
     setHasUnsavedChanges(true);
+  };
+
+  // File upload change handler
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUploadError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Invalid format: Please choose a PNG, JPEG, WebP, or GIF image.');
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setUploadError(`File too large (${(file.size / (1024 * 1024)).toFixed(1)}MB). Max size is 5MB.`);
+      return;
+    }
+
+    const sizeStr =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`;
+
+    setSelectedFileName(file.name);
+    setSelectedFileSize(sizeStr);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setSelectedFilePreview(reader.result);
+      }
+    };
+    reader.onerror = () => {
+      setUploadError('Failed to read the image file. Please try again.');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleConfirmUploadedAvatar = () => {
+    if (!selectedFilePreview) return;
+    updateProfile({ avatarUrl: selectedFilePreview });
+    updateUserProfile({ avatar: selectedFilePreview });
+    setShowAvatarModal(false);
+    setSelectedFilePreview(null);
+    setSelectedFileName('');
+    setSelectedFileSize('');
+    showToast('Profile photo updated successfully!');
+  };
+
+  const handleSelectPresetAvatar = (url: string) => {
+    updateProfile({ avatarUrl: url });
+    updateUserProfile({ avatar: url });
+    setShowAvatarModal(false);
+    setSelectedFilePreview(null);
+    setSelectedFileName('');
+    setSelectedFileSize('');
+    showToast('Profile photo updated!');
   };
 
   const updateAiCompanion = (updates: Partial<UserSettings['aiCompanion']>) => {
@@ -134,11 +204,12 @@ export function Settings() {
       // 1. Save locally in dashboardStore
       setUserSettings(settings);
 
-      // 2. Update platform auth state & context
+      // 2. Update platform auth state & context (including avatar)
       updateUserProfile({
         fullName: settings.profile.fullName,
         email: settings.profile.email,
         trajectory: settings.profile.role,
+        avatar: settings.profile.avatarUrl,
       });
 
       // 3. Save to backend / Vercel API
@@ -1716,89 +1787,143 @@ export function Settings() {
       {showAvatarModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/50 backdrop-blur-sm animate-in fade-in"
-          onClick={() => setShowAvatarModal(false)}
+          onClick={() => {
+            setShowAvatarModal(false);
+            setSelectedFilePreview(null);
+            setUploadError(null);
+          }}
         >
           <div
-            className="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 p-space-lg overflow-hidden"
+            className="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 p-space-lg overflow-hidden max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-4">
-              <h3 className="font-headline-sm text-headline-sm text-on-surface">Choose Profile Avatar</h3>
+              <div>
+                <h3 className="font-headline-sm text-headline-sm text-on-surface">Profile Photo & Avatar</h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Upload an image from your device or select an engineer persona.
+                </p>
+              </div>
               <button
                 type="button"
-                onClick={() => setShowAvatarModal(false)}
-                className="text-outline hover:text-on-surface"
+                onClick={() => {
+                  setShowAvatarModal(false);
+                  setSelectedFilePreview(null);
+                  setUploadError(null);
+                }}
+                className="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <p className="font-body-sm text-body-sm text-on-surface-variant mb-4">
-              Select one of our modern engineer personas or enter a custom photo image URL.
-            </p>
+            {/* 1. Device File Upload Section */}
+            <div className="mb-5 p-4 rounded-xl bg-surface-container-low border border-outline-variant/30">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[20px] text-primary">upload_file</span>
+                  Upload From Your Device
+                </span>
+                <span className="font-label-sm text-xs text-outline">Max 5MB</span>
+              </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {PRESET_AVATARS.map((av) => (
-                <div
-                  key={av.url}
-                  onClick={() => {
-                    updateProfile({ avatarUrl: av.url });
-                    setShowAvatarModal(false);
-                    showToast('Profile photo updated!');
-                  }}
-                  className={`p-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${
-                    settings.profile.avatarUrl === av.url
-                      ? 'border-primary bg-primary-fixed/30 ring-2 ring-primary/30'
-                      : 'border-outline-variant/30 bg-surface-container-low hover:bg-surface-container'
-                  }`}
-                >
-                  <img
-                    src={av.url}
-                    alt={av.label}
-                    className="w-12 h-12 rounded-lg object-cover shrink-0 bg-surface-container"
-                  />
-                  <span className="font-label-sm text-label-sm text-on-surface font-medium truncate">
-                    {av.label.split('(')[0]}
-                  </span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                onChange={handleFileChange}
+                className="hidden"
+                id="avatarLocalFileInput"
+              />
+
+              {uploadError && (
+                <div className="p-2.5 mb-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 font-body-sm text-xs flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[18px]">error</span>
+                  <span>{uploadError}</span>
                 </div>
-              ))}
+              )}
+
+              {selectedFilePreview ? (
+                <div className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+                  <img
+                    src={selectedFilePreview}
+                    alt="Uploaded Preview"
+                    className="w-16 h-16 rounded-xl object-cover ring-2 ring-primary/40 shadow-sm shrink-0"
+                  />
+                  <div className="flex-1 min-w-0 text-center sm:text-left">
+                    <p className="font-label-md text-xs font-semibold text-on-surface truncate">
+                      {selectedFileName || 'Uploaded Photo'}
+                    </p>
+                    <p className="font-code-sm text-[11px] text-outline mt-0.5">
+                      {selectedFileSize} • Ready to apply
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3 py-1.5 rounded-lg border border-outline-variant/40 text-xs font-medium text-on-surface hover:bg-surface-container transition-colors"
+                    >
+                      Change
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleConfirmUploadedAvatar}
+                      className="px-3.5 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+                    >
+                      Save Photo
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex flex-col items-center justify-center p-5 border-2 border-dashed border-outline-variant/40 hover:border-primary/60 rounded-xl cursor-pointer hover:bg-surface-container transition-all group text-center"
+                >
+                  <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform mb-2">
+                    <span className="material-symbols-outlined text-[22px]">add_photo_alternate</span>
+                  </div>
+                  <p className="font-label-md text-xs font-semibold text-on-surface">
+                    Choose an image from your device
+                  </p>
+                  <p className="font-body-sm text-[11px] text-outline mt-0.5">
+                    PNG, JPEG, WebP, or GIF (up to 5MB)
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-outline-variant/20">
-              <label className="font-label-md text-label-md text-on-surface font-medium">
-                Custom Image URL
+            {/* 2. Persona Preset Avatars Section */}
+            <div>
+              <label className="font-label-md text-label-md text-on-surface font-semibold block mb-2.5">
+                Or Choose a Persona Avatar
               </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="url"
-                  placeholder="https://example.com/photo.jpg"
-                  className="flex-1 px-3 py-2 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary border border-outline-variant/30"
-                  defaultValue={settings.profile.avatarUrl}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const input = e.currentTarget.value.trim();
-                      if (input) {
-                        updateProfile({ avatarUrl: input });
-                        setShowAvatarModal(false);
-                        showToast('Custom profile photo updated!');
-                      }
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                    if (input && input.value.trim()) {
-                      updateProfile({ avatarUrl: input.value.trim() });
-                      setShowAvatarModal(false);
-                      showToast('Custom profile photo updated!');
-                    }
-                  }}
-                  className="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold"
-                >
-                  Apply
-                </button>
+              <div className="grid grid-cols-2 gap-2.5">
+                {PRESET_AVATARS.map((av) => (
+                  <div
+                    key={av.url}
+                    onClick={() => handleSelectPresetAvatar(av.url)}
+                    className={`p-2 rounded-xl border flex items-center gap-2.5 cursor-pointer transition-all ${
+                      settings.profile.avatarUrl === av.url
+                        ? 'border-primary bg-primary-fixed/30 ring-2 ring-primary/30'
+                        : 'border-outline-variant/30 bg-surface-container-low hover:bg-surface-container'
+                    }`}
+                  >
+                    <img
+                      src={av.url}
+                      alt={av.label}
+                      className="w-11 h-11 rounded-lg object-cover shrink-0 bg-surface-container"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-label-sm text-xs text-on-surface font-medium truncate">
+                        {av.label.split('(')[0].trim()}
+                      </p>
+                      <p className="font-code-sm text-[10px] text-outline truncate">
+                        {av.label.includes('(') ? av.label.split('(')[1].replace(')', '') : ''}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -19,6 +19,7 @@ export interface AuthUser {
   email: string;
   trajectory?: string;
   token?: string;
+  avatar?: string;
 }
 
 export interface StoredAccount {
@@ -26,6 +27,7 @@ export interface StoredAccount {
   email: string;
   password: string;
   trajectory: string;
+  avatar?: string;
 }
 
 export interface LearnMateContextValue {
@@ -196,6 +198,7 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
       email: account.email,
       trajectory: account.trajectory,
       token: 'auth_' + Math.random().toString(36).substring(2),
+      avatar: account.avatar,
     };
 
     localStorage.setItem(AUTH_KEY, JSON.stringify(authUser));
@@ -215,6 +218,7 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
         email: updates.email ?? prev?.email ?? '',
         trajectory: updates.trajectory ?? prev?.trajectory ?? 'Staff Systems Engineer',
         token: prev?.token || 'auth_token',
+        avatar: updates.avatar !== undefined ? updates.avatar : prev?.avatar,
       };
       localStorage.setItem(AUTH_KEY, JSON.stringify(updated));
       localStorage.setItem(
@@ -232,6 +236,7 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
           fullName: updated.fullName,
           email: updated.email.toLowerCase(),
           trajectory: updated.trajectory || accounts[idx].trajectory,
+          avatar: updated.avatar || accounts[idx].avatar,
         };
         localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
       }

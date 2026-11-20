@@ -260,14 +260,6 @@ export function Dashboard() {
                 <span className="text-outline">•</span>
                 <span>Top 5% consistency</span>
               </span>
-              <span
-                id="dashboardTimezonePill"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-mono text-xs"
-                title="Timezone: Indian Standard Time (IST UTC+5:30)"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>IST (UTC+5:30)</span>
-              </span>
             </div>
             <h1
               id="dashboardGreetingHeader"

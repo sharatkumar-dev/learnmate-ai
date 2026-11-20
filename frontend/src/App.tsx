@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { useLearnMate } from '@/context/LearnMateContext';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -11,6 +12,7 @@ import { Recommendations } from '@/pages/Recommendations';
 import { ProgressTracker } from '@/pages/ProgressTracker';
 import { Companion } from '@/pages/Companion';
 import { Settings } from '@/pages/Settings';
+import { applyTheme, getThemePreference } from '@/utils/dashboardStore';
 
 
 function ProtectedOnboarding() {
@@ -87,5 +89,33 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
+  useEffect(() => {
+    // 1. Initial theme application on boot
+    const pref = getThemePreference();
+    applyTheme(pref);
+
+    // 2. Listen to OS system dark mode toggle when system theme is selected
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = () => {
+      if (getThemePreference() === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleMediaChange);
+      } else {
+        mediaQuery.removeListener(handleMediaChange);
+      }
+    };
+  }, []);
+
   return <RouterProvider router={router} />;
 }
