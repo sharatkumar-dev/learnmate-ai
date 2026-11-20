@@ -10,7 +10,7 @@ router = APIRouter(prefix="/companion", tags=["companion"])
 async def companion_chat(
     body: ChatRequest,
     request: Request,
-    x_session_id: str = Header(..., alias="X-Session-ID"),
+    x_session_id: str = Header("default-session", alias="X-Session-ID"),
 ):
     langflow_client = request.app.state.langflow_client
     return await companion_service.chat(
@@ -27,7 +27,7 @@ async def companion_chat(
 @router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
-    x_session_id: str = Header(..., alias="X-Session-ID"),
+    x_session_id: str = Header("default-session", alias="X-Session-ID"),
 ):
     """Upload and parse a document (PDF, DOCX, TXT, MD, Code) for AI context."""
     filename = file.filename or "uploaded_file.txt"
@@ -60,7 +60,7 @@ async def upload_document(
 @router.post("/feedback")
 async def record_feedback(
     body: FeedbackRequest,
-    x_session_id: str = Header(..., alias="X-Session-ID"),
+    x_session_id: str = Header("default-session", alias="X-Session-ID"),
 ):
     """Record thumbs-up / thumbs-down rating for a message turn."""
     return {"status": "ok", "message_id": body.message_id, "rating": body.rating}
@@ -69,7 +69,7 @@ async def record_feedback(
 @router.get("/suggested-prompts")
 async def get_suggested_prompts(
     module_code: str = "MOD-201",
-    x_session_id: str = Header(..., alias="X-Session-ID"),
+    x_session_id: str = Header("default-session", alias="X-Session-ID"),
 ):
     """Return context-aware starter prompts for the active curriculum module."""
     prompts_map = {

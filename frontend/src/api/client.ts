@@ -9,9 +9,21 @@ import type {
   ChatResponse,
 } from '@/types/index';
 
-const BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
-  'http://localhost:8000';
+const configuredBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+
+// Candidate base URLs in priority order:
+// 1. Explicitly configured VITE_API_BASE_URL (if provided)
+// 2. Direct IPv4 loopback (bypasses Windows IPv6 localhost resolution mismatch)
+// 3. Direct localhost
+// 4. Relative root '' (utilizes Vite dev reverse proxy /api -> http://127.0.0.1:8000)
+const CANDIDATE_URLS: string[] = [
+  ...(configuredBase ? [configuredBase] : []),
+  'http://127.0.0.1:8000',
+  'http://localhost:8000',
+  '',
+].filter((url, index, self) => self.indexOf(url) === index);
+
+let activeBaseUrl = CANDIDATE_URLS[0];
 
 const SESSION_KEY = 'learnmate_session_id';
 
@@ -24,8 +36,13 @@ export class ApiError extends Error {
   }
 }
 
-function getSessionId(): string | null {
-  return sessionStorage.getItem(SESSION_KEY);
+function getSessionId(): string {
+  let sid = sessionStorage.getItem(SESSION_KEY);
+  if (!sid) {
+    sid = 'learnmate-' + Math.random().toString(36).substring(2, 10);
+    sessionStorage.setItem(SESSION_KEY, sid);
+  }
+  return sid;
 }
 
 function setSessionId(id: string): void {
@@ -37,7 +54,7 @@ function clearSessionId(): void {
 }
 
 function handleFallback<T>(path: string, body?: any): T {
-  console.info(`[LearnMate API] Backend unreachable at ${BASE_URL}. Using in-browser IBM Granite simulation for ${path}.`);
+  console.info(`[LearnMate API] Backend unreachable at ${activeBaseUrl || 'configured endpoints'}. Using in-browser IBM Granite simulation for ${path}.`);
   const sid = getSessionId() || 'demo-session-' + Math.random().toString(36).slice(2, 8);
   setSessionId(sid);
 
@@ -208,6 +225,36 @@ function handleFallback<T>(path: string, body?: any): T {
   throw new ApiError(0, 'Unable to connect to the server.');
 }
 
+async function fetchWithCandidateFallback(
+  method: string,
+  path: string,
+  headers: Record<string, string>,
+  body?: unknown
+): Promise<Response> {
+  const tryCandidates = [
+    activeBaseUrl,
+    ...CANDIDATE_URLS.filter((u) => u !== activeBaseUrl),
+  ];
+
+  let lastError: any = null;
+  for (const candidate of tryCandidates) {
+    try {
+      const url = `${candidate}${path}`;
+      const res = await fetch(url, {
+        method,
+        headers,
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      });
+      activeBaseUrl = candidate;
+      return res;
+    } catch (err: any) {
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Network request failed');
+}
+
 async function request<T>(
   method: string,
   path: string,
@@ -223,16 +270,12 @@ async function request<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}${path}`, {
-      method,
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
+    res = await fetchWithCandidateFallback(method, path, headers, body);
   } catch {
     if (path.includes('/companion/chat')) {
       throw new ApiError(
         503,
-        'Cannot connect to the LearnMate AI backend server at http://localhost:8000. Please ensure the backend is running with "uvicorn app.main:app" or check your network connection.'
+        'Cannot connect to the LearnMate AI backend server at http://127.0.0.1:8000. Please ensure the backend is running with "npm run dev:backend" or "uvicorn app.main:app" in the backend directory.'
       );
     }
     return handleFallback<T>(path, body);
@@ -272,11 +315,7 @@ async function requestWithSessionCapture<T>(
 
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}${path}`, {
-      method: 'POST',
-      headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
-    });
+    res = await fetchWithCandidateFallback('POST', path, headers, body);
   } catch {
     return handleFallback<T>(path, body);
   }
@@ -381,17 +420,25 @@ export async function uploadCompanionDocument(file: File): Promise<{
     headers['X-Session-ID'] = sid;
   }
 
-  try {
-    const res = await fetch(`${BASE_URL}/api/companion/upload`, {
-      method: 'POST',
-      headers,
-      body: formData,
-    });
-    if (res.ok) {
-      return await res.json();
+  const tryCandidates = [
+    activeBaseUrl,
+    ...CANDIDATE_URLS.filter((u) => u !== activeBaseUrl),
+  ];
+
+  for (const candidate of tryCandidates) {
+    try {
+      const res = await fetch(`${candidate}/api/companion/upload`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      if (res.ok) {
+        activeBaseUrl = candidate;
+        return await res.json();
+      }
+    } catch {
+      // try next candidate
     }
-  } catch {
-    // Client-side fallback text extractor
   }
 
   const textContent = await file.text();

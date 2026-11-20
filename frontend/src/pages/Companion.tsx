@@ -190,6 +190,7 @@ export function Companion() {
         {
           target_role: user?.trajectory || 'Distributed Systems Staff Engineer',
           active_module: `${activeModule.code}: ${activeModule.title}`,
+          current_skills: (user as any)?.currentSkills || ['Go', 'Distributed Systems', 'Docker'],
         }
       );
 

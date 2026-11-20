@@ -21,6 +21,15 @@ def get_session(session_id: str) -> SessionState:
     return session
 
 
+def get_or_create_session(session_id: str | None = None, profile=None) -> SessionState:
+    if session_id and session_id in _sessions:
+        return _sessions[session_id]
+    sid = session_id or str(uuid.uuid4())
+    session = SessionState(session_id=sid, profile=profile)
+    _sessions[sid] = session
+    return session
+
+
 def update_session(session_id: str, **kwargs) -> SessionState:
     session = get_session(session_id)
     updated = session.model_copy(update=kwargs)
