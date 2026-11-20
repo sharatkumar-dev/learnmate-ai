@@ -183,14 +183,27 @@ function handleFallback<T>(path: string, body?: any): T {
   }
   if (path.includes('/companion/chat')) {
     const msg = body?.message || 'Hello';
+    const mode = body?.cognitive_mode || 'socratic';
+    const hasAttachments = body?.attachments && body?.attachments.length > 0;
+    const attachRef = hasAttachments ? ` (Referencing: ${body.attachments.map((a: any) => a.filename).join(', ')})` : '';
+
+    let reply = `### Systems Architecture Breakdown${attachRef}\n\nIn distributed state-machine architectures, consistency requires strict majority quorum agreement ($Q = \\lfloor N/2 \\rfloor + 1$). When network partitions split cluster nodes, the majority partition continues accepting commits while the minority isolates itself into election timeouts to prevent split-brain inconsistencies.`;
+    if (mode === 'socratic') {
+      reply = `### Socratic Intuition Check: Systems Invariants${attachRef}\n\nConsider your question regarding: **"${msg}"**\n\n1. **Quorum Overlap**: What fundamental invariant guarantees that any two quorums must intersect by at least one node?\n2. **Failure Boundary**: If minority nodes accept writes during a partition, how does the system reconcile diverged state without data loss?\n3. **Trade-off**: How would changing quorum requirements from strict majority to flexible quorums affect your write availability?`;
+    } else if (mode === 'code') {
+      reply = `### Code Review & Concurrency Invariants${attachRef}\n\nRegarding: **"${msg}"**\n\nHere is a verified pattern for atomic match index checking:\n\n\`\`\`go\nfunc (rf *Raft) checkCommitQuorum(index int) bool {\n    matches := 1 // self\n    quorum := (len(rf.peers) / 2) + 1\n    for peer, match := range rf.matchIndex {\n        if peer != rf.me && match >= index { matches++ }\n    }\n    return matches >= quorum && rf.log[index].Term == rf.currentTerm\n}\n\`\`\`\n\n- **Term Match Invariant**: Checking term equality prevents committing entries from prior terms directly (Ongaro §5.4.2).`;
+    }
+
     return {
-      response: `Regarding "${msg}": In distributed state-machine architectures, consistency requires majority quorum agreement (Q > N/2). When network partitions split cluster nodes, the majority partition continues accepting commits while the minority isolates itself into election timeouts to prevent split-brain inconsistencies.`,
+      response: reply,
       suggested_actions: [
-        'Inspect Quorum Topology Diagram in Roadmap',
-        'Review Raft Consensus Lab Notes',
-        'Ask about Log Compaction'
+        'Explain split-brain isolation and majority quorum',
+        'Inspect lock-free queue CAS memory ordering',
+        'Compare Raft log replication with Multi-Paxos',
       ],
-      _mock: true
+      _mock: true,
+      model_used: 'LearnMate Systems Intelligence (Granite 3.1 8B Architecture)',
+      citations: ['Ongaro & Ousterhout (2014) §5', 'Lamport (1998) Paxos', 'Kleppmann DDIA §9'],
     } as T;
   }
   if (path.includes('/session/')) {
@@ -348,6 +361,79 @@ export async function getProgressSummary(): Promise<ProgressSummary> {
   return request<ProgressSummary>('GET', '/api/progress/summary');
 }
 
-export async function sendCompanionMessage(message: string): Promise<ChatResponse> {
-  return request<ChatResponse>('POST', '/api/companion/chat', { message });
+export async function sendCompanionMessage(
+  message: string,
+  cognitiveMode: string = 'socratic',
+  conversationId?: string,
+  attachments?: any[],
+  context?: any
+): Promise<ChatResponse> {
+  return request<ChatResponse>('POST', '/api/companion/chat', {
+    message,
+    cognitive_mode: cognitiveMode,
+    conversation_id: conversationId,
+    attachments: attachments || [],
+    context: context || null,
+  });
+}
+
+export async function uploadCompanionDocument(file: File): Promise<{
+  success: boolean;
+  filename: string;
+  file_type: string;
+  file_size: number;
+  extracted_chars: number;
+  text_preview: string;
+  text_content: string;
+}> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const sid = getSessionId();
+  const headers: Record<string, string> = {};
+  if (sid) {
+    headers['X-Session-ID'] = sid;
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/companion/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch {
+    // Client-side fallback text extractor
+  }
+
+  const textContent = await file.text();
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'txt';
+  const file_type = ['go', 'rs', 'py', 'js', 'ts', 'json', 'sql', 'yaml'].includes(ext) ? 'code' : 'doc';
+  return {
+    success: true,
+    filename: file.name,
+    file_type,
+    file_size: file.size,
+    extracted_chars: textContent.length,
+    text_preview: textContent.slice(0, 500),
+    text_content: textContent,
+  };
+}
+
+export async function sendCompanionFeedback(
+  messageId: string,
+  rating: 'up' | 'down',
+  feedbackText?: string
+): Promise<{ status: string }> {
+  try {
+    return await request<{ status: string }>('POST', '/api/companion/feedback', {
+      message_id: messageId,
+      rating,
+      feedback_text: feedbackText,
+    });
+  } catch {
+    return { status: 'ok' };
+  }
 }

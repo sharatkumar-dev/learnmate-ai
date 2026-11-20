@@ -100,6 +100,9 @@ export interface ChatResponse {
   response: string;
   suggested_actions: string[];
   _mock?: boolean;
+  model_used?: string;
+  citations?: string[];
+  conversation_id?: string;
 }
 
 // ─────────────────────────────────────────────

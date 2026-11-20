@@ -1,3 +1,4 @@
+import { recordActivity } from '@/utils/dashboardStore';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   getProgressAnalytics,
