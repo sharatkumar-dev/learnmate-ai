@@ -194,7 +194,7 @@ export function Companion() {
         content: response.response,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         mode: cognitiveMode,
-        modelUsed: response.model_used || 'Google Gemini 1.5 Flash (LearnMate Agent)',
+        modelUsed: response.model_used || 'IBM Granite 3.0 (watsonx.ai)',
         citations: response.citations || ['LearnMate Systems Knowledge Base'],
       };
 
@@ -702,7 +702,7 @@ func (rf *Raft) checkCommitQuorum(index int) bool {
                   </span>
                 </h1>
                 <p className="font-body-sm text-body-sm text-on-surface-variant truncate">
-                  Model: Google Gemini 1.5 Flash • Context: {currentThread?.attachedDocs.length || 0} Docs Loaded
+                  Model: IBM Granite 3.0 (watsonx.ai) • Context: {currentThread?.attachedDocs.length || 0} Docs Loaded
                 </p>
               </div>
             </div>
@@ -1018,7 +1018,7 @@ func (rf *Raft) checkCommitQuorum(index int) bool {
               <div className="flex items-center justify-between px-1 text-on-surface-variant font-label-sm text-label-sm">
                 <span>Press ↵ to send • Shift + ↵ for new line</span>
                 <span className="hover:underline cursor-pointer" onClick={() => setShowSettingsModal(true)}>
-                  Model: Google Gemini 1.5 Flash (LearnMate Agent)
+                  Model: IBM Granite 3.0 (watsonx.ai)
                 </span>
               </div>
             </form>
@@ -1075,7 +1075,7 @@ func (rf *Raft) checkCommitQuorum(index int) bool {
               </div>
 
               <div className="p-3 bg-surface-container-low rounded-xl text-on-surface-variant font-body-sm text-body-sm border border-outline-variant/20">
-                <p><strong>Configured AI Engine:</strong> Google Gemini 1.5 Flash</p>
+                <p><strong>Configured AI Engine:</strong> IBM watsonx.ai • Granite 3.0</p>
                 <p className="text-outline text-[12px] mt-0.5">Supports multi-turn memory, file context ingestion, and code generation.</p>
               </div>
             </div>

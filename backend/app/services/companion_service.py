@@ -278,8 +278,8 @@ async def chat(
                     "Explore edge-case failure scenarios",
                 ],
                 mock=False,
-                model_used=f"Google Gemini ({getattr(config, 'GEMINI_MODEL', 'gemini-1.5-flash')})",
-                citations=["Google Gemini AI", "LearnMate Systems Corpus"],
+                model_used="IBM Granite 3.0 (watsonx.ai)",
+                citations=["IBM watsonx.ai", "IBM Granite 3.0 Architecture", "LearnMate Systems Corpus"],
                 conversation_id=conversation_id,
             )
         except Exception as err:

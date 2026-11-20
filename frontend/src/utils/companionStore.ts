@@ -96,7 +96,7 @@ When a network partition bifurcates the cluster into **Partition A (3 nodes)** a
 3. **Log Reconciliation on Heal**: Once the partition resolves, heartbeats from Partition A's leader (which committed entries with valid higher terms) force minority followers to overwrite uncommitted entries and synchronize.`,
         timestamp: timeStr,
         mode: 'socratic',
-        modelUsed: 'Google Gemini 1.5 Flash (LearnMate Agent)',
+        modelUsed: 'IBM Granite 3.0 (watsonx.ai)',
         citations: ['Ongaro & Ousterhout (2014) §5.2, §5.4', 'Stanford CS244B Corpus'],
       },
     ],
