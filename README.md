@@ -98,7 +98,7 @@ The modern tech industry faces a severe talent gap in mission-critical infrastru
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                        Frontend Application (React 19 + TypeScript)                    │
-│      Vite · Tailwind CSS v3 · Radix UI · Lucide React · Global Command Palette (⌘K)     │
+│      Vite · Tailwind CSS v3 · Radix UI · Lucide React · Global Command Palette (⌘K)   │
 │                                                                                        │
 │  Landing Page │ Auth │ Calibration │ Dashboard │ Roadmap │ Progress │ Companion │ Sets │
 └───────────────────────────┬────────────────────────────────┬───────────────────────────┘
