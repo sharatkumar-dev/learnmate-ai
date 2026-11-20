@@ -241,7 +241,7 @@ export function Dashboard() {
       )}
 
       {/* Editorial Greeting & Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-surface-container">
+      <div className="relative overflow-hidden rounded-2xl bg-surface-container-lowest p-6 sm:p-8 shadow-sm border border-surface-container">
         <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-primary-fixed/25 blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -317,7 +317,7 @@ export function Dashboard() {
       {/* 4 Stat Modules */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Stat 1: Active Study Time */}
-        <div className="rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
+        <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
           <div className="flex items-center justify-between">
             <span className="font-sans text-xs uppercase tracking-wider text-outline font-semibold">
               Active Study Time
@@ -349,7 +349,7 @@ export function Dashboard() {
         </div>
 
         {/* Stat 2: Concept Mastery */}
-        <div className="rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
+        <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
           <div className="flex items-center justify-between">
             <span className="font-sans text-xs uppercase tracking-wider text-outline font-semibold">
               Concept Mastery
@@ -374,7 +374,7 @@ export function Dashboard() {
         </div>
 
         {/* Stat 3: Current Track */}
-        <div className="rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
+        <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
           <div className="flex items-center justify-between">
             <span className="font-sans text-xs uppercase tracking-wider text-outline font-semibold">
               Current Track
@@ -399,7 +399,7 @@ export function Dashboard() {
         </div>
 
         {/* Stat 4: AI Mentor Sessions */}
-        <div className="rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
+        <div className="rounded-xl bg-surface-container-lowest p-4 shadow-sm hover:shadow-md transition-shadow border border-surface-container">
           <div className="flex items-center justify-between">
             <span className="font-sans text-xs uppercase tracking-wider text-outline font-semibold">
               AI Mentor Queries
@@ -435,7 +435,7 @@ export function Dashboard() {
         {/* Left Column (8 cols) */}
         <div className="lg:col-span-8 space-y-6">
           {/* Primary Study Workspace: Interactive Code Sandbox */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm space-y-4 border border-surface-container">
+          <div className="rounded-2xl bg-surface-container-lowest p-6 shadow-sm space-y-4 border border-surface-container">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-primary" />
@@ -746,7 +746,7 @@ export function Dashboard() {
         {/* Right Column (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
           {/* AI Learning Companion Insight Box */}
-          <div className="rounded-2xl bg-white p-5 shadow-sm relative overflow-hidden border border-surface-container">
+          <div className="rounded-2xl bg-surface-container-lowest p-5 shadow-sm relative overflow-hidden border border-surface-container">
             <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-primary-fixed/30 blur-2xl pointer-events-none" />
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5">
@@ -788,7 +788,7 @@ export function Dashboard() {
           </div>
 
           {/* Upcoming Milestones & Deadlines */}
-          <div className="rounded-2xl bg-white p-5 shadow-sm space-y-4 border border-surface-container">
+          <div className="rounded-2xl bg-surface-container-lowest p-5 shadow-sm space-y-4 border border-surface-container">
             <div className="flex items-center justify-between">
               <h3 className="font-headline font-bold text-sm text-on-surface">Upcoming Milestones</h3>
               <span className="font-sans text-xs text-primary font-bold">
@@ -814,7 +814,7 @@ export function Dashboard() {
                     className={`mt-0.5 w-4 h-4 rounded flex items-center justify-center text-xs shrink-0 transition-colors ${
                       milestone.completed
                         ? 'bg-primary text-white'
-                        : 'bg-white shadow-xs border border-outline-variant/60'
+                        : 'bg-surface-container shadow-xs border border-outline-variant/60'
                     }`}
                   >
                     {milestone.completed && (
@@ -861,7 +861,7 @@ export function Dashboard() {
           </div>
 
           {/* Weekly Learning Rhythm (7-Day Heat Blocks with Today Highlight) */}
-          <div className="rounded-2xl bg-white p-5 shadow-sm space-y-3 border border-surface-container">
+          <div className="rounded-2xl bg-surface-container-lowest p-5 shadow-sm space-y-3 border border-surface-container">
             <div className="flex items-center justify-between">
               <h3 className="font-headline font-bold text-sm text-on-surface">Weekly Rhythm</h3>
               <span className="font-mono text-xs text-primary font-semibold">
@@ -923,7 +923,7 @@ export function Dashboard() {
       {/* Inline Modal: Add Custom Study Goal */}
       {goalModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-surface-container relative">
+          <div className="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-md w-full p-6 border border-surface-container relative">
             <div className="flex items-center justify-between pb-3 border-b border-surface-container mb-4">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-xl">flag</span>

@@ -1238,7 +1238,7 @@ export function LearningPathway() {
       {/* Interactive 5-Question Knowledge Check Modal */}
       {quizModalOpen && selectedModule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-surface-container relative max-h-[90vh] flex flex-col">
+          <div className="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-surface-container relative max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between pb-3 border-b border-surface-container shrink-0">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-xl">quiz</span>
@@ -1385,7 +1385,7 @@ export function LearningPathway() {
       {/* AI Adapt Pathway Modal */}
       {showAdaptModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-surface-container relative">
+          <div className="bg-surface-container-lowest rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-surface-container relative">
             <div className="flex items-center justify-between pb-3 border-b border-surface-container">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
