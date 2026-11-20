@@ -25,6 +25,13 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="LearnMate AI API", version="0.1.0", lifespan=lifespan)
 
+# Initialize app.state defaults for serverless runtimes (e.g., Vercel)
+app.state.http_client = httpx.AsyncClient()
+app.state.langflow_client = LangflowClient(
+    base_url=config.LANGFLOW_BASE_URL,
+    api_key=config.LANGFLOW_API_KEY,
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -36,8 +43,9 @@ app.add_middleware(
         "http://127.0.0.1:5199",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://learnmate-ai-skn.vercel.app",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

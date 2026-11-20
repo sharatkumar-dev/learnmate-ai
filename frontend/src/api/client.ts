@@ -9,19 +9,22 @@ import type {
   ChatResponse,
 } from '@/types/index';
 
+const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
 const configuredBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
 
 // Candidate base URLs in priority order:
-// 1. Explicitly configured VITE_API_BASE_URL (if provided)
-// 2. Direct IPv4 loopback (bypasses Windows IPv6 localhost resolution mismatch)
-// 3. Direct localhost
-// 4. Relative root '' (utilizes Vite dev reverse proxy /api -> http://127.0.0.1:8000)
-const CANDIDATE_URLS: string[] = [
-  ...(configuredBase ? [configuredBase] : []),
-  'http://127.0.0.1:8000',
-  'http://localhost:8000',
-  '',
-].filter((url, index, self) => self.indexOf(url) === index);
+// - On HTTPS (e.g. Vercel deployment): prioritize same-origin relative root '' to prevent mixed-content blocks
+// - On HTTP (local development): prioritize direct IPv4 loopback http://127.0.0.1:8000
+const CANDIDATE_URLS: string[] = (
+  isHttps
+    ? ['', ...(configuredBase && configuredBase.startsWith('https://') ? [configuredBase] : [])]
+    : [
+        ...(configuredBase ? [configuredBase] : []),
+        'http://127.0.0.1:8000',
+        'http://localhost:8000',
+        '',
+      ]
+).filter((url, index, self) => self.indexOf(url) === index);
 
 let activeBaseUrl = CANDIDATE_URLS[0];
 
@@ -275,7 +278,9 @@ async function request<T>(
     if (path.includes('/companion/chat')) {
       throw new ApiError(
         503,
-        'Cannot connect to the LearnMate AI backend server at http://127.0.0.1:8000. Please ensure the backend is running with "npm run dev:backend" or "uvicorn app.main:app" in the backend directory.'
+        isHttps
+          ? 'Cannot connect to the LearnMate AI backend server on Vercel. Please check your network connection.'
+          : 'Cannot connect to the LearnMate AI backend server at http://127.0.0.1:8000. Please ensure the backend is running with "npm run dev" or check your network connection.'
       );
     }
     return handleFallback<T>(path, body);
@@ -293,6 +298,11 @@ async function request<T>(
       if (err.detail) msg = err.detail;
     } catch {
       // ignore parse error
+    }
+    if (res.status === 405) {
+      msg = 'The Vercel Serverless API is currently re-deploying or the backend route is unavailable. Please verify Vercel environment variables and re-try in a moment.';
+    } else if (res.status === 503) {
+      msg = msg || 'AI Service temporarily unavailable. Please verify API credentials or try again.';
     }
     throw new ApiError(
       res.status,
