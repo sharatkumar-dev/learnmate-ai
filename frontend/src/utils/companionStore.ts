@@ -42,7 +42,7 @@ const ACTIVE_THREAD_KEY = 'learnmate_companion_active_thread_id_v2';
 // Default Starter Conversation
 // ─────────────────────────────────────────────
 
-function createInitialThread(_userName: string = 'Learner'): ConversationThread {
+function createInitialThread(userName: string = 'Learner'): ConversationThread {
   const now = new Date();
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -75,29 +75,22 @@ function createInitialThread(_userName: string = 'Learner'): ConversationThread 
     ],
     messages: [
       {
-        id: 'msg-seed-user',
-        role: 'user',
-        content:
-          'Can you clarify why Raft requires a strict quorum for committing log entries, and what happens if a network partition isolates 2 nodes out of 5?',
-        timestamp: timeStr,
-      },
-      {
-        id: 'msg-seed-asst',
+        id: 'msg-welcome-asst',
         role: 'assistant',
-        content: `### Strict Majority Quorum & Network Partition Safety
+        content: `### Welcome to LearnMate AI Companion
 
-In a cluster of **N = 5** nodes, Raft enforces that state machine transitions require agreement from a **strict majority**:
-$$\\text{Quorum Size} = \\lfloor N / 2 \\rfloor + 1 = \\lfloor 5 / 2 \\rfloor + 1 = 3 \\text{ Nodes}$$
+Hello **${userName}**! I am your AI learning companion and systems engineering mentor powered by **IBM Granite 3.0 (watsonx.ai)**.
 
-When a network partition bifurcates the cluster into **Partition A (3 nodes)** and **Partition B (2 nodes)**:
+I am context-aware and calibrated to your active career trajectory as a **Distributed Systems Staff Engineer**:
+- **Active Curriculum**: SYS-401 (Distributed Consensus & Fault Tolerance)
+- **Active Mode**: Socratic Invariant Guidance
+- **Capabilities**: Architectural proofs, concurrency race detection, failure model trade-offs, and file analysis.
 
-1. **Partition A (Majority)**: Can assemble a quorum ($3 \\ge 3$). It elects or maintains its leader and continues committing client requests.
-2. **Partition B (Minority)**: Can collect at most 2 votes ($2 < 3$). Candidates repeatedly timeout and increment terms, but cannot form a quorum or commit log entries. State machine progress stalls safely on this side, preventing split-brain.
-3. **Log Reconciliation on Heal**: Once the partition resolves, heartbeats from Partition A's leader (which committed entries with valid higher terms) force minority followers to overwrite uncommitted entries and synchronize.`,
+Feel free to say **"Hi"** or ask any question to get started!`,
         timestamp: timeStr,
         mode: 'socratic',
         modelUsed: 'IBM Granite 3.0 (watsonx.ai)',
-        citations: ['Ongaro & Ousterhout (2014) §5.2, §5.4', 'Stanford CS244B Corpus'],
+        citations: ['LearnMate Adaptive Curriculum Engine'],
       },
     ],
   };

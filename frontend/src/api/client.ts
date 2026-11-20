@@ -182,29 +182,10 @@ function handleFallback<T>(path: string, body?: any): T {
     } as T;
   }
   if (path.includes('/companion/chat')) {
-    const msg = body?.message || 'Hello';
-    const mode = body?.cognitive_mode || 'socratic';
-    const hasAttachments = body?.attachments && body?.attachments.length > 0;
-    const attachRef = hasAttachments ? ` (Referencing: ${body.attachments.map((a: any) => a.filename).join(', ')})` : '';
-
-    let reply = `### Systems Architecture Breakdown${attachRef}\n\nIn distributed state-machine architectures, consistency requires strict majority quorum agreement ($Q = \\lfloor N/2 \\rfloor + 1$). When network partitions split cluster nodes, the majority partition continues accepting commits while the minority isolates itself into election timeouts to prevent split-brain inconsistencies.`;
-    if (mode === 'socratic') {
-      reply = `### Socratic Intuition Check: Systems Invariants${attachRef}\n\nConsider your question regarding: **"${msg}"**\n\n1. **Quorum Overlap**: What fundamental invariant guarantees that any two quorums must intersect by at least one node?\n2. **Failure Boundary**: If minority nodes accept writes during a partition, how does the system reconcile diverged state without data loss?\n3. **Trade-off**: How would changing quorum requirements from strict majority to flexible quorums affect your write availability?`;
-    } else if (mode === 'code') {
-      reply = `### Code Review & Concurrency Invariants${attachRef}\n\nRegarding: **"${msg}"**\n\nHere is a verified pattern for atomic match index checking:\n\n\`\`\`go\nfunc (rf *Raft) checkCommitQuorum(index int) bool {\n    matches := 1 // self\n    quorum := (len(rf.peers) / 2) + 1\n    for peer, match := range rf.matchIndex {\n        if peer != rf.me && match >= index { matches++ }\n    }\n    return matches >= quorum && rf.log[index].Term == rf.currentTerm\n}\n\`\`\`\n\n- **Term Match Invariant**: Checking term equality prevents committing entries from prior terms directly (Ongaro §5.4.2).`;
-    }
-
-    return {
-      response: reply,
-      suggested_actions: [
-        'Explain split-brain isolation and majority quorum',
-        'Inspect lock-free queue CAS memory ordering',
-        'Compare Raft log replication with Multi-Paxos',
-      ],
-      _mock: true,
-      model_used: 'LearnMate Systems Intelligence (Granite 3.1 8B Architecture)',
-      citations: ['Ongaro & Ousterhout (2014) §5', 'Lamport (1998) Paxos', 'Kleppmann DDIA §9'],
-    } as T;
+    throw new ApiError(
+      503,
+      'Unable to connect to the LearnMate AI backend at http://localhost:8000. Please verify the backend server is running.'
+    );
   }
   if (path.includes('/session/')) {
     return {
@@ -248,16 +229,18 @@ async function request<T>(
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
+    if (path.includes('/companion/chat')) {
+      throw new ApiError(
+        503,
+        'Cannot connect to the LearnMate AI backend server at http://localhost:8000. Please ensure the backend is running with "uvicorn app.main:app" or check your network connection.'
+      );
+    }
     return handleFallback<T>(path, body);
   }
 
   if (res.status === 404) {
     clearSessionId();
     throw new ApiError(404, 'Session not found. Please restart onboarding.');
-  }
-
-  if (res.status >= 500) {
-    throw new ApiError(res.status, 'Something went wrong. Please try again.');
   }
 
   if (!res.ok) {
@@ -268,7 +251,10 @@ async function request<T>(
     } catch {
       // ignore parse error
     }
-    throw new ApiError(res.status, msg);
+    throw new ApiError(
+      res.status,
+      msg || (res.status >= 500 ? 'AI Service temporarily unavailable. Please try again.' : 'Request failed.')
+    );
   }
 
   return res.json() as Promise<T>;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLearnMate } from '@/context/LearnMateContext';
 import { getRoadmapData } from '@/utils/roadmapStore';
+import { RichMessageRenderer } from '@/components/RichMessageRenderer';
 import {
   type CognitiveMode,
   type ChatAttachmentItem,
@@ -59,6 +60,9 @@ export function Companion() {
   // Chat UI state
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [lastError, setLastError] = useState<{ message: string; failedPrompt?: string } | null>(null);
+  const [streamingMsgId, setStreamingMsgId] = useState<string | null>(null);
+  const [streamingContent, setStreamingContent] = useState<string>('');
   const cognitiveMode = currentThread?.cognitiveMode || 'socratic';
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -172,6 +176,7 @@ export function Companion() {
     setSending(true);
 
     try {
+      setLastError(null);
       const response = await sendCompanionMessage(
         text,
         cognitiveMode,
@@ -188,52 +193,49 @@ export function Companion() {
         }
       );
 
-      const asstMsg: CompanionMessage = {
-        id: `msg-asst-${Date.now()}`,
-        role: 'assistant',
-        content: response.response,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        mode: cognitiveMode,
-        modelUsed: response.model_used || 'IBM Granite 3.0 (watsonx.ai)',
-        citations: response.citations || ['LearnMate Systems Knowledge Base'],
-      };
+      const asstMsgId = `msg-asst-${Date.now()}`;
+      const fullText = response.response;
 
-      addMessageToActiveThread(currentThread.id, asstMsg);
-      setThreads(getStoredThreads(userName));
-    } catch {
-      // Offline fallback
-      setTimeout(() => {
-        const asstMsg: CompanionMessage = {
-          id: `msg-asst-${Date.now()}`,
-          role: 'assistant',
-          content: `### Systems Architecture Breakdown
+      // Progressive Token Streaming Animation
+      setStreamingMsgId(asstMsgId);
+      setStreamingContent('');
 
-Regarding: **"${text}"**
+      const words = fullText.split(' ');
+      let currentIdx = 0;
+      const chunkSize = Math.max(1, Math.floor(words.length / 24));
 
-In distributed consensus and concurrent state-machine architectures, consistency requires strict majority quorum verification ($Q = \\lfloor N / 2 \\rfloor + 1$). Under network partitions, nodes in a minority partition cannot establish quorum, preventing split-brain state mutations.
-
-\`\`\`go
-func (rf *Raft) checkCommitQuorum(index int) bool {
-    matches := 1
-    quorum := (len(rf.peers) / 2) + 1
-    for _, match := range rf.matchIndex {
-        if match >= index { matches++ }
-    }
-    return matches >= quorum && rf.log[index].Term == rf.currentTerm
-}
-\`\`\`
-
-- **Term Invariant**: Checking term equality guarantees older uncommitted entries are rolled back upon partition reconciliation (Ongaro §5.4).`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          mode: cognitiveMode,
-          modelUsed: 'LearnMate Systems Intelligence (Granite 3.1 8B Architecture)',
-          citations: ['Ongaro & Ousterhout (2014) §5', 'Stanford CS244B Corpus'],
-        };
-        addMessageToActiveThread(currentThread.id, asstMsg);
-        setThreads(getStoredThreads(userName));
-      }, 400);
-    } finally {
+      const timer = setInterval(() => {
+        currentIdx += chunkSize;
+        if (currentIdx >= words.length) {
+          clearInterval(timer);
+          setStreamingMsgId(null);
+          setStreamingContent('');
+          const asstMsg: CompanionMessage = {
+            id: asstMsgId,
+            role: 'assistant',
+            content: fullText,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            mode: cognitiveMode,
+            modelUsed: response.model_used || 'IBM Granite 3.0 (watsonx.ai)',
+            citations: response.citations || ['LearnMate Systems Knowledge Base'],
+          };
+          addMessageToActiveThread(currentThread.id, asstMsg);
+          setThreads(getStoredThreads(userName));
+          setSending(false);
+        } else {
+          setStreamingContent(words.slice(0, currentIdx).join(' '));
+          bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 35);
+    } catch (err: any) {
       setSending(false);
+      setStreamingMsgId(null);
+      const errorMessage = err?.message || 'Unable to connect to the AI service.';
+      setLastError({
+        message: errorMessage,
+        failedPrompt: text,
+      });
+      showToast('AI Service Notice: ' + errorMessage);
     }
   };
 
@@ -847,8 +849,11 @@ func (rf *Raft) checkCommitQuorum(index int) bool {
                         </div>
 
                         {/* Content Body */}
-                        <div className="p-space-md bg-surface-container-low rounded-xl font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap border border-outline-variant/20 shadow-xs">
-                          {msg.content}
+                        <div className="p-space-md bg-surface-container-low rounded-xl border border-outline-variant/20 shadow-xs">
+                          <RichMessageRenderer
+                            content={streamingMsgId === msg.id ? streamingContent : msg.content}
+                            isStreaming={streamingMsgId === msg.id}
+                          />
                         </div>
 
                         {/* Citations Pill */}
@@ -865,15 +870,84 @@ func (rf *Raft) checkCommitQuorum(index int) bool {
               ))
             )}
 
-            {/* Sending / Generating Pulse Indicator */}
-            {sending && (
-              <div className="flex items-start gap-space-sm max-w-[96%] animate-pulse">
-                <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 mt-1">
+            {/* Live Streaming Message Bubble */}
+            {streamingMsgId && (
+              <div className="flex items-start gap-space-sm max-w-[96%] animate-in fade-in">
+                <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 mt-1 shadow-sm">
                   <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
                 </div>
-                <div className="p-space-md bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md border border-outline-variant/30 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                  <span>Synthesizing systems architecture &amp; formulating proof...</span>
+                <div className="flex-1 min-w-0 space-y-space-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-headline-sm text-headline-sm text-on-surface font-semibold">
+                      LearnMate Tutor
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-surface-container text-primary font-code-sm text-code-sm font-semibold">
+                      GENERATING...
+                    </span>
+                  </div>
+                  <div className="p-space-md bg-surface-container-low rounded-xl border border-outline-variant/20 shadow-xs">
+                    <RichMessageRenderer content={streamingContent} isStreaming={true} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sending / Generating Thinking Indicator */}
+            {sending && !streamingMsgId && (
+              <div className="flex items-start gap-space-sm max-w-[96%] animate-in fade-in" id="typingIndicator">
+                <div className="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0 mt-1 shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+                </div>
+                <div className="p-space-md bg-surface-container-low rounded-xl text-on-surface font-body-md text-body-md border border-outline-variant/30 flex items-center gap-3 shadow-xs">
+                  <div className="flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-2 h-2 rounded-full bg-primary animate-bounce"></span>
+                  </div>
+                  <span className="text-on-surface-variant font-medium">
+                    IBM Granite 3.0 is analyzing your prompt and learning context...
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Error Notification Card with Retry Button */}
+            {lastError && (
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-error-container/20 border border-error/40 text-on-surface shadow-sm animate-in fade-in" id="errorCard">
+                <div className="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">error</span>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <h5 className="font-headline-sm text-headline-sm text-error font-semibold">
+                    AI Service Notice
+                  </h5>
+                  <p className="font-body-sm text-body-sm text-on-surface leading-relaxed">
+                    {lastError.message}
+                  </p>
+                  {lastError.failedPrompt && (
+                    <div className="pt-2 flex items-center gap-2">
+                      <button
+                        type="button"
+                        id="retryErrorBtn"
+                        onClick={() => {
+                          const p = lastError.failedPrompt;
+                          setLastError(null);
+                          if (p) handleSend(p);
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-medium hover:bg-primary/90 transition-all shadow-xs"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">refresh</span>
+                        <span>Retry Message</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLastError(null)}
+                        className="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
