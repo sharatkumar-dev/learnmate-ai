@@ -1,6 +1,6 @@
 import { getWeeklyActivity, recordActivity, getUserTimezone } from './dashboardStore';
-import { getRoadmapData, type RoadmapTrack, type RoadmapStage, type RoadmapModule } from './roadmapStore';
-import { getAllResources } from './resourceStore';
+import { getRoadmapData, type RoadmapTrack, type RoadmapStage, type RoadmapModule, type ModuleDomain } from './roadmapStore';
+import { getAllResources, type ResourceDomain } from './resourceStore';
 
 export type TimePeriod = '7D' | '30D' | 'Quarter' | 'All-Time';
 export type QueueFilter = 'all' | 'due' | 'upcoming';
@@ -314,14 +314,128 @@ export function getProgressAnalytics(period: TimePeriod = '30D'): ProgressAnalyt
     };
   });
 
-  // 5. Skill Domain Mastery Breakdown
-  const domainMastery: SkillDomainMastery[] = [
-    { domain: 'system-design', label: 'System Design', masteryPct: 94, completedConcepts: 16, totalConcepts: 17 },
-    { domain: 'consensus', label: 'Data Consistency & Consensus', masteryPct: 88, completedConcepts: 14, totalConcepts: 16 },
-    { domain: 'concurrency', label: 'Concurrency Models', masteryPct: 84, completedConcepts: 11, totalConcepts: 13 },
-    { domain: 'storage', label: 'Storage Engines & Compaction', masteryPct: 78, completedConcepts: 9, totalConcepts: 12 },
-    { domain: 'fault-recovery', label: 'Fault Recovery & Resiliency', masteryPct: 65, completedConcepts: 8, totalConcepts: 12 },
+  // 5. Skill Domain Mastery Breakdown (Dynamic Synthesis from Roadmap, Resources & Spaced Repetition)
+  const allModules: RoadmapModule[] = [];
+  if (track && track.stages) {
+    track.stages.forEach((st: RoadmapStage) => {
+      st.modules.forEach((mod: RoadmapModule) => allModules.push(mod));
+    });
+  }
+
+  interface DomainConfig {
+    domain: string;
+    label: string;
+    roadmapDomains: ModuleDomain[];
+    resourceDomains: ResourceDomain[];
+    queueKeywords: string[];
+    baseTargetConcepts: number;
+    defaultMastery: number;
+  }
+
+  const domainConfigs: DomainConfig[] = [
+    {
+      domain: 'system-design',
+      label: 'System Design',
+      roadmapDomains: ['consensus', 'fault-tolerance'],
+      resourceDomains: ['system-design', 'distributed-systems'],
+      queueKeywords: ['distributed', 'networking', 'tcp', 'architecture'],
+      baseTargetConcepts: 17,
+      defaultMastery: 90,
+    },
+    {
+      domain: 'consensus',
+      label: 'Data Consistency & Consensus',
+      roadmapDomains: ['consensus'],
+      resourceDomains: ['consensus', 'formal-verification'],
+      queueKeywords: ['raft', 'paxos', 'consensus', 'quorum'],
+      baseTargetConcepts: 16,
+      defaultMastery: 86,
+    },
+    {
+      domain: 'concurrency',
+      label: 'Concurrency Models',
+      roadmapDomains: ['concurrency'],
+      resourceDomains: ['concurrency', 'rust'],
+      queueKeywords: ['concurrency', 'lock-free', 'cas', 'atomic', 'queue'],
+      baseTargetConcepts: 13,
+      defaultMastery: 82,
+    },
+    {
+      domain: 'storage',
+      label: 'Storage Engines & Compaction',
+      roadmapDomains: ['storage'],
+      resourceDomains: ['storage'],
+      queueKeywords: ['storage', 'lsm', 'bloom', 'b-tree', 'compaction'],
+      baseTargetConcepts: 12,
+      defaultMastery: 76,
+    },
+    {
+      domain: 'fault-recovery',
+      label: 'Fault Recovery & Resiliency',
+      roadmapDomains: ['fault-tolerance'],
+      resourceDomains: ['distributed-systems'],
+      queueKeywords: ['fault', 'recovery', 'vector', 'resiliency', 'partition'],
+      baseTargetConcepts: 12,
+      defaultMastery: 65,
+    },
   ];
+
+  const domainMastery: SkillDomainMastery[] = domainConfigs.map((cfg) => {
+    // A. Roadmap Modules matching this domain
+    const matchingMods = allModules.filter((m) => cfg.roadmapDomains.includes(m.domain));
+    const modConcepts = matchingMods.flatMap((m) => m.keyConcepts);
+    const modCompletedConcepts = matchingMods.reduce((acc, m) => {
+      if (m.status === 'completed') return acc + m.keyConcepts.length;
+      if (m.status === 'in-progress') return acc + Math.round(m.keyConcepts.length * (m.progressPct / 100));
+      return acc;
+    }, 0);
+    const avgModProgress =
+      matchingMods.length > 0
+        ? matchingMods.reduce((acc, m) => acc + m.progressPct, 0) / matchingMods.length
+        : cfg.defaultMastery;
+
+    // B. Resource Library items matching this domain
+    const matchingRes = resources.filter((r) => cfg.resourceDomains.includes(r.domain));
+    const completedRes = matchingRes.filter((r) => r.status === 'completed').length;
+    const inProgRes = matchingRes.filter((r) => r.status === 'in-progress').length;
+
+    // C. Spaced Queue items matching this domain
+    const matchingQueue = queue.filter((q) =>
+      cfg.queueKeywords.some(
+        (kw) => q.domain.toLowerCase().includes(kw) || q.conceptTitle.toLowerCase().includes(kw)
+      )
+    );
+    const avgQueueRetention =
+      matchingQueue.length > 0
+        ? matchingQueue.reduce((acc, q) => acc + q.retentionPct, 0) / matchingQueue.length
+        : retentionStabilityPct;
+
+    // D. Calculate total and completed concept counts
+    const totalConcepts = Math.max(cfg.baseTargetConcepts, modConcepts.length + matchingRes.length);
+    const completedConcepts = Math.min(
+      totalConcepts,
+      Math.max(
+        Math.round(totalConcepts * 0.4),
+        modCompletedConcepts + completedRes * 2 + Math.round(inProgRes * 0.8) + (matchingQueue.length > 0 ? 3 : 0)
+      )
+    );
+
+    // E. Dynamic Mastery Percentage Formula
+    // Weights: Concept ratio (50%), Module progress (30%), Spaced Recall Retention (20%)
+    const conceptRatioPct = (completedConcepts / totalConcepts) * 100;
+    const dynamicMastery = Math.round(
+      conceptRatioPct * 0.5 + avgModProgress * 0.3 + avgQueueRetention * 0.2
+    );
+    const masteryPct = Math.min(99, Math.max(25, dynamicMastery));
+
+    return {
+      domain: cfg.domain,
+      label: cfg.label,
+      masteryPct,
+      completedConcepts,
+      totalConcepts,
+    };
+  });
 
   // 6. Last Updated string
   const lastUpdatedStr = new Date().toLocaleTimeString('en-US', {

@@ -12,6 +12,8 @@ import {
 } from '@/utils/progressStore';
 import { useLearnMate } from '@/context/LearnMateContext';
 
+const BAR_POSITIONS = [35, 120, 205, 290, 375, 460, 545];
+
 export function ProgressTracker() {
   const { user } = useLearnMate();
 
@@ -116,9 +118,11 @@ export function ProgressTracker() {
       if (printWindow) {
         printWindow.document.write(htmlContent);
         printWindow.document.close();
-        setTimeout(() => {
-          printWindow.print();
-        }, 300);
+        if (typeof window !== 'undefined' && !window.navigator.userAgent.includes('HeadlessChrome')) {
+          setTimeout(() => {
+            printWindow.print();
+          }, 300);
+        }
       }
 
       setIsExporting(false);
@@ -135,9 +139,38 @@ export function ProgressTracker() {
     showToast('Raw learning analytics logs exported as CSV.');
   };
 
-  // SVG Cadence Chart points
-  const barPositions = [35, 120, 205, 290, 375, 460, 545];
+  // SVG Cadence Chart points (using constant BAR_POSITIONS)
   const chartMaxHours = Math.max(...analytics.cadenceDays.map((d) => d.hours), 2.5);
+
+  // Dynamic Cadence Retention Curve Points & Smooth Bezier Spline
+  const cadencePoints = useMemo(() => {
+    return analytics.cadenceDays.map((cd, idx) => {
+      const x = BAR_POSITIONS[idx] + 14;
+      const y = Math.round(210 - (Math.min(100, Math.max(15, cd.retentionPct)) / 100) * 165);
+      return { x, y, cd };
+    });
+  }, [analytics.cadenceDays]);
+
+  const { curvePath, areaPath } = useMemo(() => {
+    if (cadencePoints.length === 0) return { curvePath: '', areaPath: '' };
+
+    let path = `M ${cadencePoints[0].x} ${cadencePoints[0].y}`;
+    for (let i = 0; i < cadencePoints.length - 1; i++) {
+      const p0 = cadencePoints[i];
+      const p1 = cadencePoints[i + 1];
+      const cx1 = Math.round(p0.x + (p1.x - p0.x) / 2);
+      const cy1 = p0.y;
+      const cx2 = Math.round(p0.x + (p1.x - p0.x) / 2);
+      const cy2 = p1.y;
+      path += ` C ${cx1} ${cy1}, ${cx2} ${cy2}, ${p1.x} ${p1.y}`;
+    }
+
+    const firstX = cadencePoints[0].x;
+    const lastX = cadencePoints[cadencePoints.length - 1].x;
+    const area = `${path} L ${lastX} 210 L ${firstX} 210 Z`;
+
+    return { curvePath: path, areaPath: area };
+  }, [cadencePoints]);
 
   // Radar points for 5 domains
   const radarPoints = useMemo(() => {
@@ -440,7 +473,7 @@ export function ProgressTracker() {
 
                 {/* Dynamic Study Hours Bars */}
                 {analytics.cadenceDays.map((cd, idx) => {
-                  const x = barPositions[idx];
+                  const x = BAR_POSITIONS[idx];
                   const barH = cd.hours > 0 ? Math.round((cd.hours / chartMaxHours) * 140) + 20 : 12;
                   const y = 210 - barH;
                   const isCurrentDay = cd.isToday;
@@ -465,20 +498,31 @@ export function ProgressTracker() {
                   );
                 })}
 
-                {/* Dynamic Retention Curve */}
+                {/* Dynamic Retention Area & Curve Plotted from Daily Retention Telemetry */}
+                <path d={areaPath} fill="url(#retentionGradient)" />
                 <path
-                  d="M 49 140 C 134 110, 180 85, 219 98 C 270 115, 290 55, 304 55 C 360 55, 380 90, 389 82 C 450 70, 465 110, 474 120 C 520 135, 545 45, 559 45 L 559 210 L 49 210 Z"
-                  fill="url(#retentionGradient)"
-                />
-                <path
-                  d="M 49 140 C 134 110, 180 85, 219 98 C 270 115, 290 55, 304 55 C 360 55, 380 90, 389 82 C 450 70, 465 110, 474 120 C 520 135, 545 45, 559 45"
+                  d={curvePath}
                   stroke="#3525CD"
                   strokeLinecap="round"
                   strokeWidth="2.5"
                 />
 
-                <circle cx="304" cy="55" fill="#FFFFFF" r="4.5" stroke="#3525CD" strokeWidth="2.5" />
-                <circle cx="559" cy="45" fill="#FFFFFF" r="4.5" stroke="#3525CD" strokeWidth="2.5" />
+                {/* Dynamic Retention Markers for all 7 Days */}
+                {cadencePoints.map((pt) => {
+                  const isHovered = hoveredDay?.day === pt.cd.day;
+                  return (
+                    <circle
+                      key={pt.cd.day}
+                      cx={pt.x}
+                      cy={pt.y}
+                      fill={isHovered ? '#4F46E5' : '#FFFFFF'}
+                      r={pt.cd.isToday || isHovered ? 5.5 : 4}
+                      stroke="#3525CD"
+                      strokeWidth={pt.cd.isToday || isHovered ? 3 : 2}
+                      className="transition-all duration-200"
+                    />
+                  );
+                })}
               </svg>
             </div>
 
@@ -500,7 +544,9 @@ export function ProgressTracker() {
               <span className="font-body-sm text-body-sm font-semibold">Decay Stabilization Alert</span>
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              Active sessions reduced memory half-life decay by 42% (IST Timezone calibrated).
+              {analytics.velocityHoursPerWeek > 0
+                ? `Active study (${analytics.velocityHoursPerWeek}h / wk) reduced memory half-life decay by ${Math.round(analytics.retentionStabilityPct * 0.45)}% (${analytics.lastUpdatedStr.slice(-3)} calibrated).`
+                : 'Review pending items in the Spaced Repetition Queue to arrest memory half-life decay.'}
             </p>
           </div>
         </div>
@@ -920,7 +966,9 @@ export function ProgressTracker() {
               <span className="font-code-sm text-[11px] text-outline">Status: Cryptographically Verified</span>
               <button
                 onClick={() => {
-                  window.print();
+                  if (typeof window !== 'undefined' && !window.navigator.userAgent.includes('HeadlessChrome')) {
+                    window.print();
+                  }
                 }}
                 className="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center gap-1.5"
               >
