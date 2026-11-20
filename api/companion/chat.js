@@ -124,14 +124,20 @@ export default async function handler(req, res) {
       },
     };
 
-    const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.5-flash'];
+    const candidateModels = [
+      { name: 'gemini-3.5-flash-lite', timeout: 10000 },
+      { name: 'gemini-3-flash-preview', timeout: 10000 },
+      { name: 'gemini-3.1-flash-lite', timeout: 10000 },
+      { name: 'gemini-flash-lite-latest', timeout: 12000 },
+      { name: 'gemini-3.5-flash', timeout: 12000 },
+    ];
     let aiResponseText = '';
     let lastError = null;
 
-    for (const model of candidateModels) {
+    for (const item of candidateModels) {
       try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const result = await callGemini(geminiUrl, payload, 45000);
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${item.name}:generateContent?key=${apiKey}`;
+        const result = await callGemini(geminiUrl, payload, item.timeout);
 
         if (result.status === 200) {
           const data = JSON.parse(result.body);
@@ -144,10 +150,10 @@ export default async function handler(req, res) {
             if (aiResponseText) break;
           }
         } else {
-          lastError = `${result.status}: ${result.body.slice(0, 200)}`;
+          lastError = `${item.name} (${result.status}): ${result.body.slice(0, 150)}`;
         }
       } catch (err) {
-        lastError = err.message;
+        lastError = `${item.name}: ${err.message}`;
       }
     }
 

@@ -23,12 +23,18 @@ async def _call_gemini_api(
     system_instruction: str,
     messages: list[dict],
     api_key: str,
-    model: str = "gemini-3.5-flash",
+    model: str = "gemini-3.5-flash-lite",
 ) -> str:
-    """Call Google Gemini API generateContent endpoint with automatic model fallback."""
-    candidate_models = ["gemini-3.5-flash", "gemini-3.5-flash-lite"]
-    if model and model not in candidate_models:
-        candidate_models.insert(0, model)
+    """Call Google Gemini API generateContent endpoint with multi-tier model fallback."""
+    candidate_models = [
+        {"name": "gemini-3.5-flash-lite", "timeout": 10.0},
+        {"name": "gemini-3-flash-preview", "timeout": 10.0},
+        {"name": "gemini-3.1-flash-lite", "timeout": 10.0},
+        {"name": "gemini-flash-lite-latest", "timeout": 12.0},
+        {"name": "gemini-3.5-flash", "timeout": 12.0},
+    ]
+    if model and model not in [m["name"] for m in candidate_models]:
+        candidate_models.insert(0, {"name": model, "timeout": 10.0})
 
     contents = []
     for m in messages:
@@ -50,10 +56,12 @@ async def _call_gemini_api(
     }
 
     last_error = None
-    async with httpx.AsyncClient(timeout=35.0) as client:
-        for cand_model in candidate_models:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{cand_model}:generateContent?key={api_key}"
-            try:
+    for cand in candidate_models:
+        cand_name = cand["name"]
+        cand_timeout = cand["timeout"]
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{cand_name}:generateContent?key={api_key}"
+        try:
+            async with httpx.AsyncClient(timeout=cand_timeout) as client:
                 res = await client.post(url, json=payload)
                 if res.status_code == 200:
                     data = res.json()
@@ -61,12 +69,14 @@ async def _call_gemini_api(
                     if candidates and "content" in candidates[0]:
                         parts = candidates[0]["content"].get("parts", [])
                         if parts:
-                            return parts[0].get("text", "")
+                            text = "\n".join(p.get("text", "") for p in parts if p.get("text"))
+                            if text:
+                                return text
                 else:
-                    last_error = f"{res.status_code}: {res.text[:200]}"
-            except Exception as e:
-                last_error = str(e)
-                continue
+                    last_error = f"{cand_name} ({res.status_code}): {res.text[:150]}"
+        except Exception as e:
+            last_error = f"{cand_name} error: {str(e)}"
+            continue
 
     raise RuntimeError(f"All candidate Gemini models failed or timed out. Last error: {last_error}")
 

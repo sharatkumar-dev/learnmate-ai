@@ -28,4 +28,4 @@ FLOW_ID_LEARNING_COMPANION: str = os.getenv("FLOW_ID_LEARNING_COMPANION", "")
 
 # Google Gemini API
 GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
