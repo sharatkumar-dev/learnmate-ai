@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core import config
 from app.clients.langflow import LangflowClient
-from app.routers import companion, pathway, progress, recommendations, session, skills
+from app.routers import companion, pathway, progress, recommendations, session, settings, skills
 
 
 @asynccontextmanager
@@ -63,3 +63,4 @@ app.include_router(skills.router, prefix="/api")
 app.include_router(recommendations.router, prefix="/api")
 app.include_router(progress.router, prefix="/api")
 app.include_router(companion.router, prefix="/api")
+app.include_router(settings.router, prefix="/api")

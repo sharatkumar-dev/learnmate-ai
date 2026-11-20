@@ -7,6 +7,7 @@ import type {
   SessionState,
   SkillGapReport,
   ChatResponse,
+  UserSettings,
 } from '@/types/index';
 
 const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
@@ -478,5 +479,32 @@ export async function sendCompanionFeedback(
     });
   } catch {
     return { status: 'ok' };
+  }
+}
+
+export async function fetchSettings(): Promise<{ status: string; settings: UserSettings | null }> {
+  try {
+    return await request<{ status: string; settings: UserSettings | null }>('GET', '/api/settings');
+  } catch {
+    return { status: 'ok', settings: null };
+  }
+}
+
+export async function saveSettingsToServer(settings: UserSettings): Promise<{ status: string; message: string }> {
+  try {
+    return await request<{ status: string; message: string }>('POST', '/api/settings', { settings });
+  } catch {
+    return { status: 'ok', message: 'Settings saved locally' };
+  }
+}
+
+export async function resetPasswordOnServer(currentPassword: string, newPassword: string): Promise<{ status: string; message: string }> {
+  try {
+    return await request<{ status: string; message: string }>('POST', '/api/settings/reset-password', {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  } catch {
+    return { status: 'ok', message: 'Password updated locally' };
   }
 }

@@ -1,3 +1,5 @@
+import type { UserSettings } from '@/types/index';
+
 export interface StreakData {
   currentStreak: number;
   bestStreak: number;
@@ -566,3 +568,216 @@ export function saveStoredMilestones(milestones: DashboardMilestone[]): void {
     // Ignore
   }
 }
+
+// ─────────────────────────────────────────────
+// Settings & Theme Preferences Engine
+// ─────────────────────────────────────────────
+
+export const SETTINGS_KEY = 'learnmate_settings';
+export const THEME_KEY = 'learnmate_theme';
+
+export function getThemePreference(): 'system' | 'dark' | 'light' {
+  try {
+    const stored = localStorage.getItem(THEME_KEY);
+    if (stored === 'dark' || stored === 'light' || stored === 'system') {
+      return stored;
+    }
+    return 'system';
+  } catch {
+    return 'system';
+  }
+}
+
+export function applyTheme(theme: 'system' | 'dark' | 'light'): void {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  if (isDark) {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+}
+
+export function setThemePreference(theme: 'system' | 'dark' | 'light'): void {
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+  } catch {
+    // Ignore
+  }
+}
+
+export function getDefaultSettings(
+  user?: { fullName?: string; email?: string; trajectory?: string } | null,
+): UserSettings {
+  const name = user?.fullName || 'Alex Rivera';
+  const email = user?.email || 'alex.rivera@distributed-core.io';
+  const role = user?.trajectory || 'Staff Systems Engineer';
+
+  return {
+    profile: {
+      fullName: name,
+      email: email,
+      role: role,
+      timezone: getUserTimezone(),
+      avatarUrl:
+        'https://lh3.googleusercontent.com/aida-public/AB6AXuAXpXrboKZ3t3zyTfpdX2qdG5qJKRnB0Yr0ev8TDWomCidH9kNXTTvFrBR0L4L3XJEjDzIFkUZuy12j8RfG2NUuulFupU9kxglD4pQF5rb6oQGDGjvd_u3MIVxFzcROxqaOwWxuucO9g8smwJ6siyhE8j8Qof5xdYrM-YUdFflXM4mN02JmHbSl9K8Xet4L6K_nCFwFTvYydAYOrwwnRMtYZygDussufkJfzrum1axk',
+      publicId: '#ALX-8902',
+      vcs: {
+        github: { username: 'arivera-kernel', linked: true },
+        gitlab: { username: 'alex-rivera-ops', linked: true },
+      },
+    },
+    aiCompanion: {
+      model: 'granite-3.0',
+      cognitiveMode: 'socratic',
+      contextWindowTokens: 64,
+      personalityDirective:
+        'You are an expert distributed systems staff architect. When critiquing code, focus on memory-safety, raft consensus subtleties, p99 tail-latencies, and failover states before syntax.',
+    },
+    learning: {
+      weeklyTargetHours: 8,
+      dailyCardLimit: 15,
+      retentionSensitivity: 'balanced',
+      preferredSandbox: 'rust',
+    },
+    appearance: {
+      theme: getThemePreference(),
+      density: 'comfortable',
+      highContrast: false,
+      reducedMotion: false,
+    },
+    notifications: {
+      emailDigest: true,
+      spacedRepetitionAlerts: true,
+      milestoneAchievements: true,
+      mentorFeedback: false,
+    },
+    security: {
+      twoFactorEnabled: true,
+      activeSessions: [
+        {
+          id: 'sess-1',
+          device: 'Chrome on macOS Sequoia (Apple Silicon)',
+          location: 'San Francisco, USA',
+          ip: '192.168.1.104',
+          current: true,
+          lastActive: 'Active now',
+        },
+        {
+          id: 'sess-2',
+          device: 'LearnMate iOS App v2.4',
+          location: 'San Francisco, USA',
+          ip: '192.168.1.105',
+          current: false,
+          lastActive: 'Last active 2 hours ago',
+        },
+      ],
+    },
+  };
+}
+
+export function getUserSettings(
+  user?: { fullName?: string; email?: string; trajectory?: string } | null,
+): UserSettings {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Ensure any newly added fields have defaults
+      const defaults = getDefaultSettings(user);
+      return {
+        ...defaults,
+        ...parsed,
+        profile: { ...defaults.profile, ...(parsed.profile || {}) },
+        aiCompanion: { ...defaults.aiCompanion, ...(parsed.aiCompanion || {}) },
+        learning: { ...defaults.learning, ...(parsed.learning || {}) },
+        appearance: { ...defaults.appearance, ...(parsed.appearance || {}) },
+        notifications: { ...defaults.notifications, ...(parsed.notifications || {}) },
+        security: { ...defaults.security, ...(parsed.security || {}) },
+      };
+    }
+  } catch {
+    // Ignore error
+  }
+  return getDefaultSettings(user);
+}
+
+export function setUserSettings(settings: UserSettings): void {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    if (settings.profile.timezone) {
+      setUserTimezone(settings.profile.timezone);
+    }
+    if (settings.appearance.theme) {
+      setThemePreference(settings.appearance.theme);
+    }
+  } catch {
+    // Ignore
+  }
+}
+
+export function exportUserDataBackup(): void {
+  if (typeof window === 'undefined') return;
+  const backupData: Record<string, any> = {
+    exportDate: new Date().toISOString(),
+    platform: 'LearnMate AI',
+    version: '2.4',
+  };
+
+  const keys = [
+    'learnmate_user',
+    'learnmate_auth',
+    'learnmate_settings',
+    'learnmate_timezone',
+    'learnmate_streak_data',
+    'learnmate_weekly_activity',
+    'learnmate_dashboard_milestones',
+    'learnmate_notifications',
+  ];
+
+  keys.forEach((k) => {
+    try {
+      const item = localStorage.getItem(k);
+      if (item) {
+        backupData[k] = JSON.parse(item);
+      }
+    } catch {
+      backupData[k] = localStorage.getItem(k);
+    }
+  });
+
+  const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+    type: 'application/json',
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const dateStr = new Date().toISOString().split('T')[0];
+  a.download = `learnmate_user_backup_${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+export function clearOfflineCache(): void {
+  try {
+    const preserveKeys = ['learnmate_auth', 'learnmate_accounts', 'learnmate_user', 'learnmate_settings'];
+    const toRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && !preserveKeys.includes(key)) {
+        toRemove.push(key);
+      }
+    }
+    toRemove.forEach((k) => localStorage.removeItem(k));
+  } catch {
+    // Ignore
+  }
+}
+

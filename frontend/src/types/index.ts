@@ -118,3 +118,58 @@ export interface SessionState {
   progress: ProgressState;
   chat_history: ChatMessage[];
 }
+
+// ─────────────────────────────────────────────
+// User settings & preferences
+// ─────────────────────────────────────────────
+
+export interface UserSettings {
+  profile: {
+    fullName: string;
+    email: string;
+    role: string;
+    timezone: string;
+    avatarUrl?: string;
+    publicId: string;
+    vcs: {
+      github?: { username: string; linked: boolean };
+      gitlab?: { username: string; linked: boolean };
+    };
+  };
+  aiCompanion: {
+    model: 'granite-3.0' | 'granite-3.0-instruct' | 'granite-3.0-guardian';
+    cognitiveMode: 'socratic' | 'direct';
+    contextWindowTokens: number;
+    personalityDirective: string;
+  };
+  learning: {
+    weeklyTargetHours: number;
+    dailyCardLimit: number;
+    retentionSensitivity: 'relaxed' | 'balanced' | 'strict';
+    preferredSandbox: 'rust' | 'go' | 'python' | 'typescript';
+  };
+  appearance: {
+    theme: 'system' | 'dark' | 'light';
+    density: 'comfortable' | 'compact';
+    highContrast: boolean;
+    reducedMotion: boolean;
+  };
+  notifications: {
+    emailDigest: boolean;
+    spacedRepetitionAlerts: boolean;
+    milestoneAchievements: boolean;
+    mentorFeedback: boolean;
+  };
+  security: {
+    twoFactorEnabled: boolean;
+    activeSessions: Array<{
+      id: string;
+      device: string;
+      location: string;
+      ip: string;
+      current: boolean;
+      lastActive: string;
+    }>;
+  };
+}
+

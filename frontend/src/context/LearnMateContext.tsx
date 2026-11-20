@@ -48,6 +48,8 @@ export interface LearnMateContextValue {
   addChatMessage: (m: ChatMessage) => void;
   signUpUser: (fullName: string, email: string, password: string, trajectory: string) => { success: boolean; error?: string };
   signInUser: (email: string, password: string) => { success: boolean; error?: string };
+  updateUserProfile: (updates: Partial<AuthUser>) => void;
+  updateStoredPassword: (currentPassword: string, newPassword: string) => { success: boolean; error?: string };
   signOut: () => void;
 }
 
@@ -206,6 +208,62 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
     return { success: true };
   }, []);
 
+  const updateUserProfile = useCallback((updates: Partial<AuthUser>) => {
+    setUser((prev) => {
+      const updated: AuthUser = {
+        fullName: updates.fullName ?? prev?.fullName ?? 'Learner',
+        email: updates.email ?? prev?.email ?? '',
+        trajectory: updates.trajectory ?? prev?.trajectory ?? 'Staff Systems Engineer',
+        token: prev?.token || 'auth_token',
+      };
+      localStorage.setItem(AUTH_KEY, JSON.stringify(updated));
+      localStorage.setItem(
+        'learnmate_user',
+        JSON.stringify({ name: updated.fullName, trajectory: updated.trajectory }),
+      );
+
+      // Sync with stored accounts if existing email matches
+      const accounts = getStoredAccounts();
+      const currentEmail = prev?.email?.toLowerCase();
+      const idx = accounts.findIndex((a) => a.email.toLowerCase() === currentEmail);
+      if (idx !== -1) {
+        accounts[idx] = {
+          ...accounts[idx],
+          fullName: updated.fullName,
+          email: updated.email.toLowerCase(),
+          trajectory: updated.trajectory || accounts[idx].trajectory,
+        };
+        localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+      }
+      return updated;
+    });
+  }, []);
+
+  const updateStoredPassword = useCallback(
+    (currentPassword: string, newPassword: string) => {
+      if (!user) {
+        return { success: false, error: 'User is not authenticated.' };
+      }
+      const accounts = getStoredAccounts();
+      const idx = accounts.findIndex(
+        (a) => a.email.toLowerCase() === user.email.toLowerCase(),
+      );
+      if (idx === -1) {
+        return { success: false, error: 'User account not found.' };
+      }
+      if (accounts[idx].password !== currentPassword) {
+        return { success: false, error: 'Incorrect current password.' };
+      }
+      if (newPassword.length < 6) {
+        return { success: false, error: 'New password must be at least 6 characters.' };
+      }
+      accounts[idx].password = newPassword;
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+      return { success: true };
+    },
+    [user],
+  );
+
   const signOut = useCallback(() => {
     sessionStorage.removeItem(SESSION_KEY);
     localStorage.removeItem(AUTH_KEY);
@@ -245,6 +303,8 @@ export function LearnMateProvider({ children }: { children: ReactNode }) {
         addChatMessage,
         signUpUser,
         signInUser,
+        updateUserProfile,
+        updateStoredPassword,
         signOut,
       }}
     >
