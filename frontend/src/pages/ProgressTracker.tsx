@@ -22,6 +22,7 @@ export function ProgressTracker() {
   const [showExport, setShowExport] = useState(false);
   const [queueFilter, setQueueFilter] = useState<'all' | 'due' | 'upcoming'>('all');
   const [hoveredDay, setHoveredDay] = useState<CadenceDayPoint | null>(null);
+  const [selectedDay, setSelectedDay] = useState<CadenceDayPoint | null>(null);
 
   // Modals
   const [activeRecallItem, setActiveRecallItem] = useState<SpacedItem | null>(null);
@@ -101,6 +102,11 @@ export function ProgressTracker() {
         ? '✓ Solid retention recorded! Review scheduled in 3 days (+0.25h study credit).'
         : '✓ Retention decay reset. Scheduled for priority review tomorrow.'
     );
+  };
+
+  // Toggle active day selection in Cadence Chart
+  const handleDayClick = (cd: CadenceDayPoint) => {
+    setSelectedDay((prev) => (prev?.day === cd.day ? null : cd));
   };
 
   // Export Executive PDF / HTML report
@@ -478,21 +484,44 @@ export function ProgressTracker() {
                   const y = 210 - barH;
                   const isCurrentDay = cd.isToday;
 
+                  const isSelected = selectedDay?.day === cd.day;
+
                   return (
                     <g
                       key={cd.day}
-                      className="cursor-pointer transition-opacity hover:opacity-100"
+                      className="cursor-pointer transition-all hover:opacity-100"
+                      onClick={() => handleDayClick(cd)}
                       onMouseEnter={() => setHoveredDay(cd)}
                       onMouseLeave={() => setHoveredDay(null)}
+                      id={`barGroup-${cd.day}`}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${cd.fullDate}: ${cd.hours} hours`}
                     >
+                      {/* Selection glow halo */}
+                      {isSelected && (
+                        <rect
+                          fill="none"
+                          stroke="#3525CD"
+                          strokeWidth="2.5"
+                          strokeDasharray="3 3"
+                          height={barH + 10}
+                          rx="6"
+                          width="34"
+                          x={x - 3}
+                          y={y - 5}
+                          className="animate-pulse"
+                        />
+                      )}
                       <rect
-                        fill={isCurrentDay ? '#4F46E5' : '#C3C0FF'}
+                        fill={isSelected ? '#3525CD' : isCurrentDay ? '#4F46E5' : '#C3C0FF'}
                         height={barH}
-                        opacity={isCurrentDay ? 0.9 : 0.65}
+                        opacity={isSelected ? 1 : isCurrentDay ? 0.9 : 0.65}
                         rx="4"
                         width="28"
                         x={x}
                         y={y}
+                        className="transition-colors duration-200"
                       />
                     </g>
                   );
@@ -510,16 +539,18 @@ export function ProgressTracker() {
                 {/* Dynamic Retention Markers for all 7 Days */}
                 {cadencePoints.map((pt) => {
                   const isHovered = hoveredDay?.day === pt.cd.day;
+                  const isSelected = selectedDay?.day === pt.cd.day;
                   return (
                     <circle
                       key={pt.cd.day}
                       cx={pt.x}
                       cy={pt.y}
-                      fill={isHovered ? '#4F46E5' : '#FFFFFF'}
-                      r={pt.cd.isToday || isHovered ? 5.5 : 4}
-                      stroke="#3525CD"
-                      strokeWidth={pt.cd.isToday || isHovered ? 3 : 2}
-                      className="transition-all duration-200"
+                      fill={isSelected ? '#3525CD' : isHovered ? '#4F46E5' : '#FFFFFF'}
+                      r={isSelected ? 7 : pt.cd.isToday || isHovered ? 5.5 : 4}
+                      stroke={isSelected ? '#FFFFFF' : '#3525CD'}
+                      strokeWidth={isSelected ? 2.5 : pt.cd.isToday || isHovered ? 3 : 2}
+                      className="cursor-pointer transition-all duration-200"
+                      onClick={() => handleDayClick(pt.cd)}
                     />
                   );
                 })}
@@ -527,28 +558,92 @@ export function ProgressTracker() {
             </div>
 
             <div className="flex justify-between px-6 pt-3 text-outline font-code-sm text-code-sm">
-              {analytics.cadenceDays.map((cd) => (
-                <span
-                  key={cd.day}
-                  className={cd.isToday ? 'text-primary font-bold underline underline-offset-4' : ''}
-                >
-                  {cd.day}
-                </span>
-              ))}
+              {analytics.cadenceDays.map((cd) => {
+                const isSelected = selectedDay?.day === cd.day;
+                return (
+                  <button
+                    key={cd.day}
+                    id={`dayBtn-${cd.day}`}
+                    type="button"
+                    onClick={() => handleDayClick(cd)}
+                    className={`font-code-sm text-code-sm px-2 py-0.5 rounded transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-primary text-on-primary font-bold shadow-sm scale-105'
+                        : cd.isToday
+                        ? 'text-primary font-bold underline underline-offset-4'
+                        : 'text-outline hover:text-on-surface hover:bg-surface-container-high'
+                    }`}
+                  >
+                    {cd.day}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="mt-6 pt-4 bg-surface-container-low rounded-lg p-3 flex flex-wrap items-center justify-between text-on-surface border border-outline-variant/20">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">lightbulb</span>
-              <span className="font-body-sm text-body-sm font-semibold">Decay Stabilization Alert</span>
+          {selectedDay ? (
+            <div className="mt-6 p-4 bg-surface-container-low rounded-xl border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-1 shadow-sm">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[18px]">event</span>
+                  <span className="font-label-sm text-label-sm font-bold uppercase tracking-wider text-primary">
+                    {selectedDay.fullDate} Cadence Telemetry
+                  </span>
+                  {selectedDay.isToday && (
+                    <span className="px-2 py-0.5 rounded-full bg-primary-fixed text-[11px] font-bold text-on-primary-fixed">
+                      TODAY (IST)
+                    </span>
+                  )}
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface mt-1">
+                  {selectedDay.hours > 0 ? (
+                    <span>
+                      <strong>{selectedDay.hours.toFixed(1)} hrs</strong> logged •{' '}
+                      <strong>{selectedDay.retentionPct}%</strong> memory retention index on this day.
+                    </span>
+                  ) : (
+                    <span>
+                      Rest / Recall day with 0 hrs logged • Retention calibrated at{' '}
+                      <strong>{selectedDay.retentionPct}%</strong>.
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    recordActivity(0.5);
+                    showToast(`Added +0.5h study credit to ${selectedDay.fullDate}!`);
+                    setUpdateCounter((c) => c + 1);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold transition-all shadow-sm flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-[15px]">add</span>
+                  <span>+0.5h Quick Log</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedDay(null)}
+                  className="px-2.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm transition-all"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">
-              {analytics.velocityHoursPerWeek > 0
-                ? `Active study (${analytics.velocityHoursPerWeek}h / wk) reduced memory half-life decay by ${Math.round(analytics.retentionStabilityPct * 0.45)}% (${analytics.lastUpdatedStr.slice(-3)} calibrated).`
-                : 'Review pending items in the Spaced Repetition Queue to arrest memory half-life decay.'}
-            </p>
-          </div>
+          ) : (
+            <div className="mt-6 pt-4 bg-surface-container-low rounded-lg p-3 flex flex-wrap items-center justify-between text-on-surface border border-outline-variant/20">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[18px]">lightbulb</span>
+                <span className="font-body-sm text-body-sm font-semibold">Decay Stabilization Alert</span>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                {analytics.velocityHoursPerWeek > 0
+                  ? `Active study (${analytics.velocityHoursPerWeek}h / wk) reduced memory half-life decay by ${Math.round(analytics.retentionStabilityPct * 0.45)}% (${analytics.lastUpdatedStr.slice(-3)} calibrated). Click any day to inspect details.`
+                  : 'Click any day bar to view telemetry or log study time.'}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Skill Mastery Matrix (5 cols) */}
